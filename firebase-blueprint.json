@@ -1,0 +1,127 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "System user with custom credentials",
+      "type": "object",
+      "properties": {
+        "username": { "type": "string" },
+        "password": { "type": "string" },
+        "name": { "type": "string" },
+        "role": { "type": "string", "enum": ["admin", "agent"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["username", "password", "name", "role", "createdAt"]
+    },
+    "RealEstateListing": {
+      "title": "Real Estate Listing",
+      "description": "Property listing details",
+      "type": "object",
+      "properties": {
+        "location": { "type": "string" },
+        "type": { "type": "string" },
+        "direction": { "type": "string" },
+        "googleMapsUrl": { "type": "string" },
+        "imageUrl": { "type": "string" },
+        "imageUrl2": { "type": "string" },
+        "contactPhone": { "type": "string" },
+        "notes": { "type": "string" },
+        "area": { "type": "number" },
+        "salePrice": { "type": "number" },
+        "bidPrice": { "type": "number" },
+        "dimNorth": { "type": "string" },
+        "dimSouth": { "type": "string" },
+        "dimEast": { "type": "string" },
+        "dimWest": { "type": "string" },
+        "source": { "type": "string" },
+        "date": { "type": "string", "format": "date-time" },
+        "createdBy": { "type": "string" }
+      },
+      "required": ["location", "type", "date", "createdBy"]
+    },
+    "Notification": {
+      "title": "Notification",
+      "description": "System-wide notification",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "message": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "createdBy": { "type": "string" }
+      },
+      "required": ["title", "message", "createdAt", "createdBy"]
+    },
+    "Appointment": {
+      "title": "Appointment",
+      "description": "Property viewing appointment",
+      "type": "object",
+      "properties": {
+        "listingId": { "type": "string" },
+        "listingLocation": { "type": "string" },
+        "clientName": { "type": "string" },
+        "clientPhone": { "type": "string" },
+        "appointmentDate": { "type": "string", "format": "date-time" },
+        "notes": { "type": "string" },
+        "status": { "type": "string", "enum": ["pending", "completed", "cancelled"] },
+        "createdBy": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["listingId", "listingLocation", "clientName", "clientPhone", "appointmentDate", "status", "createdBy", "createdAt"]
+    },
+    "Alert": {
+      "title": "Alert",
+      "description": "Reminders and special offer alerts",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "message": { "type": "string" },
+        "type": { "type": "string", "enum": ["offer", "reminder", "normal"] },
+        "targetDate": { "type": "string", "format": "date-time" },
+        "isRead": { "type": "boolean" },
+        "createdBy": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "message", "type", "isRead", "createdBy", "createdAt"]
+    },
+    "Comment": {
+      "title": "Comment",
+      "description": "User comment on a listing",
+      "type": "object",
+      "properties": {
+        "listingId": { "type": "string" },
+        "userId": { "type": "string" },
+        "username": { "type": "string" },
+        "userName": { "type": "string" },
+        "text": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["listingId", "userId", "username", "userName", "text", "createdAt"]
+    }
+  },
+  "firestore": {
+    "users": {
+      "schema": "User",
+      "description": "Collection of system users"
+    },
+    "listings": {
+      "schema": "RealEstateListing",
+      "description": "Collection of property listings"
+    },
+    "notifications": {
+      "schema": "Notification",
+      "description": "Collection of system notifications"
+    },
+    "appointments": {
+      "schema": "Appointment",
+      "description": "Collection of viewing appointments"
+    },
+    "alerts": {
+      "schema": "Alert",
+      "description": "Collection of offer alerts and reminders"
+    },
+    "comments": {
+      "schema": "Comment",
+      "description": "Collection of user comments on listings"
+    }
+  }
+}

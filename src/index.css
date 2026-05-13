@@ -1,0 +1,40 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Noto+Naskh+Arabic:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "IBM Plex Sans Arabic", "Noto Naskh Arabic", ui-sans-serif, system-ui, sans-serif;
+  --font-naskh: "Noto Naskh Arabic", serif;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+}
+
+@layer base {
+  body {
+    @apply bg-slate-50 text-slate-900 antialiased font-sans;
+  }
+  
+  /* Prevent backwards typing/cursor jump in RTL React apps */
+  input, textarea {
+    unicode-bidi: plaintext;
+    text-align: right;
+  }
+  
+  input[type="password"], 
+  input#user-username-input,
+  input#login-username-input,
+  .ltr-input {
+    direction: ltr !important;
+    text-align: left;
+  }
+
+  /* Support for placeholder alignment */
+  ::placeholder {
+    text-align: right;
+  }
+
+  input[type="password"]::placeholder,
+  input#user-username-input::placeholder,
+  input#login-username-input::placeholder {
+    text-align: left;
+  }
+}

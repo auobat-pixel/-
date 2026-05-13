@@ -1,0 +1,111 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    // Validation for User
+    function isValidUser(data) {
+      return data.keys().hasAll(['username', 'password', 'name', 'role', 'createdAt']) &&
+             data.username is string && data.username.size() > 0 &&
+             data.name is string && data.name.size() > 0 &&
+             (data.role == 'admin' || data.role == 'editor' || data.role == 'viewer');
+    }
+
+    // Validation for Listing
+    function isValidListing(data) {
+      return data.keys().hasAll(['location', 'type', 'date', 'createdBy']) &&
+             data.location is string && data.location.size() > 0 &&
+             data.type is string && data.type.size() > 0 &&
+             data.date is string &&
+             data.createdBy is string;
+    }
+
+    // Validation for Notification
+    function isValidNotification(data) {
+      return data.keys().hasAll(['title', 'message', 'createdAt', 'createdBy']) &&
+             data.title is string && data.title.size() > 0 &&
+             data.message is string && data.message.size() > 0 &&
+             data.createdAt is string &&
+             data.createdBy is string;
+    }
+
+    // Validation for Appointment
+    function isValidAppointment(data) {
+      return data.keys().hasAll(['listingId', 'listingLocation', 'clientName', 'clientPhone', 'appointmentDate', 'status', 'createdBy', 'createdAt']) &&
+             data.listingId is string && data.listingLocation is string &&
+             data.clientName is string && data.clientPhone is string &&
+             data.appointmentDate is string && data.status in ['pending', 'completed', 'cancelled'] &&
+             data.createdBy is string && data.createdAt is string;
+    }
+
+    // Validation for Alert
+    function isValidAlert(data) {
+      return data.keys().hasAll(['title', 'message', 'type', 'isRead', 'createdBy', 'createdAt']) &&
+             data.title is string && data.message is string &&
+             data.type in ['offer', 'reminder', 'normal'] &&
+             data.isRead is bool && data.createdBy is string && data.createdAt is string;
+    }
+
+    // Validation for Comment
+    function isValidComment(data) {
+      return data.keys().hasAll(['listingId', 'userId', 'username', 'userName', 'text', 'createdAt']) &&
+             data.listingId is string && data.userId is string &&
+             data.username is string && data.userName is string &&
+             data.text is string && data.text.size() > 0 && data.text.size() <= 1000 &&
+             data.createdAt is string;
+    }
+
+    match /users/{userId} {
+      allow read: if true; 
+      allow create, update: if isValidUser(incoming());
+      allow delete: if true;
+    }
+
+    match /listings/{listingId} {
+      allow read: if true;
+      allow create: if isValidListing(incoming());
+      allow update: if isValidListing(incoming());
+      allow delete: if true;
+    }
+
+    match /notifications/{notificationId} {
+      allow read: if true;
+      allow create: if isValidNotification(incoming());
+    }
+
+    match /appointments/{appointmentId} {
+      allow read: if true;
+      allow create: if isValidAppointment(incoming());
+      allow update, delete: if true;
+    }
+
+    match /alerts/{alertId} {
+      allow read: if true;
+      allow create: if isValidAlert(incoming());
+      allow update, delete: if true;
+    }
+
+    match /comments/{commentId} {
+      allow read: if true;
+      allow create: if isValidComment(incoming());
+      allow update: if false;
+      allow delete: if true; // Keeping it simple like other collections for now, but moderation is handled by logic matching
+    }
+  }
+}
