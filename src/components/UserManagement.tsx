@@ -29,7 +29,7 @@ export const UserManagement: React.FC<UserManagementProps> = ({ users, onAddUser
       toast.error('الرمز السري يجب أن يكون 4 خانات على الأقل');
       return;
     }
-    onUpdateUserPassword(userId, convertArabicToEnglishNumbers(editPasswordValue).trim().toLowerCase());
+    onUpdateUserPassword(userId, convertArabicToEnglishNumbers(editPasswordValue).trim());
     setEditingPasswordId(null);
     setEditPasswordValue('');
     toast.success('تم تحديث الرمز السري للعضو');
@@ -38,7 +38,7 @@ export const UserManagement: React.FC<UserManagementProps> = ({ users, onAddUser
   const handleAdd = (e: React.FormEvent) => {
     e.preventDefault();
     const cleanUsername = convertArabicToEnglishNumbers(newUsername).trim().toLowerCase().replace(/\s/g, '');
-    const cleanPassword = convertArabicToEnglishNumbers(newPassword).trim().toLowerCase();
+    const cleanPassword = convertArabicToEnglishNumbers(newPassword).trim();
     const cleanName = newName.trim();
 
     if (!cleanUsername || !cleanPassword || !cleanName) {

@@ -20,21 +20,31 @@ export const Login: React.FC<LoginProps> = ({ onLogin, users }) => {
     setLoading(true);
 
     const cleanUsername = convertArabicToEnglishNumbers(username).trim().toLowerCase().replace(/\s/g, '');
-    const cleanPassword = convertArabicToEnglishNumbers(password).trim().toLowerCase();
+    const cleanPassword = convertArabicToEnglishNumbers(password).trim();
 
     setTimeout(() => {
-      const dbPassword = (u: User) => convertArabicToEnglishNumbers(u.password || '').trim().toLowerCase();
-      const user = users.find(u => convertArabicToEnglishNumbers(u.username || '').trim().toLowerCase().replace(/\s/g, '') === cleanUsername && dbPassword(u) === cleanPassword);
+      const dbPassword = (u: User) => convertArabicToEnglishNumbers(u.password || '').trim();
+      const user = users.find(u => {
+        const un = convertArabicToEnglishNumbers(u.username || '').trim().toLowerCase().replace(/\s/g, '');
+        const nm = convertArabicToEnglishNumbers(u.name || '').trim().toLowerCase().replace(/\s/g, '');
+        const isMatch = un === cleanUsername || nm === cleanUsername;
+        return isMatch && dbPassword(u) === cleanPassword;
+      });
       
       if (user) {
         onLogin(user);
         toast.success(`أهلاً بك، ${user.name}`);
       } else {
-        const checkUser = users.find(u => convertArabicToEnglishNumbers(u.username || '').trim().toLowerCase().replace(/\s/g, '') === cleanUsername);
+        const checkUser = users.find(u => {
+          const un = convertArabicToEnglishNumbers(u.username || '').trim().toLowerCase().replace(/\s/g, '');
+          const nm = convertArabicToEnglishNumbers(u.name || '').trim().toLowerCase().replace(/\s/g, '');
+          return un === cleanUsername || nm === cleanUsername;
+        });
+        
         if (checkUser) {
           toast.error('كلمة المرور غير صحيحة، يرجى المحاولة مرة أخرى');
         } else {
-          toast.error('اسم المستخدم غير صحيح أو غير موجود');
+          toast.error(`اسم المستخدم غير صحيح أو غير موجود (العدد: ${users.length})`);
         }
       }
       setLoading(false);
