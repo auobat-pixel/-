@@ -9,6 +9,7 @@ import { ListingForm } from './components/ListingForm.tsx';
 import { ListingCard } from './components/ListingCard.tsx';
 import { ShareCard } from './components/ShareCard.tsx';
 import { Login } from './components/Login.tsx';
+import { WhatsAppBroadcastModal } from './components/WhatsAppBroadcastModal.tsx';
 import { UserManagement } from './components/UserManagement.tsx';
 import { AppointmentModal } from './components/AppointmentModal.tsx';
 import { CalendarView } from './components/CalendarView.tsx';
@@ -59,6 +60,7 @@ export default function App() {
   const [editingListing, setEditingListing] = useState<RealEstateListing | null>(null);
   const [sharingListing, setSharingListing] = useState<RealEstateListing | null>(null);
   const [commentsListing, setCommentsListing] = useState<RealEstateListing | null>(null);
+  const [showWhatsAppBroadcast, setShowWhatsAppBroadcast] = useState<RealEstateListing | null>(null);
   const [listingToDeleteId, setListingToDeleteId] = useState<string | null>(null);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [alerts, setAlerts] = useState<Alert[]>([]);
@@ -389,6 +391,8 @@ export default function App() {
       };
       const docRef = await addDoc(collection(db, 'listings'), cleanData(listingData));
       
+      const newListing = { ...listingData, id: docRef.id } as RealEstateListing;
+
       // Create notification for all users
       await addDoc(collection(db, 'notifications'), cleanData({
         title: 'عرض عقاري جديد!',
@@ -398,6 +402,7 @@ export default function App() {
       }));
 
       toast.success('تمت إضافة العرض بنجاح');
+      setShowWhatsAppBroadcast(newListing);
     } catch (error) {
       handleFirestoreError(error, OperationType.CREATE, 'listings');
     }
@@ -833,6 +838,15 @@ export default function App() {
             listing={commentsListing}
             currentUser={currentUser}
             onClose={() => setCommentsListing(null)}
+          />
+        )}
+
+        {showWhatsAppBroadcast && (
+          <WhatsAppBroadcastModal
+            key="modal-whatsapp-broadcast"
+            listing={showWhatsAppBroadcast}
+            users={users}
+            onClose={() => setShowWhatsAppBroadcast(null)}
           />
         )}
 

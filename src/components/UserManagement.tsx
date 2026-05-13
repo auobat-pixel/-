@@ -19,6 +19,7 @@ export const UserManagement: React.FC<UserManagementProps> = ({ users, onAddUser
   const [newUsername, setNewUsername] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [newName, setNewName] = useState('');
+  const [newPhone, setNewPhone] = useState('');
   const [newRole, setNewRole] = useState<UserRole>('viewer');
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const [editingPasswordId, setEditingPasswordId] = useState<string | null>(null);
@@ -40,9 +41,10 @@ export const UserManagement: React.FC<UserManagementProps> = ({ users, onAddUser
     const cleanUsername = convertArabicToEnglishNumbers(newUsername).trim().toLowerCase().replace(/\s/g, '');
     const cleanPassword = convertArabicToEnglishNumbers(newPassword).trim();
     const cleanName = newName.trim();
+    const cleanPhone = convertArabicToEnglishNumbers(newPhone).trim();
 
     if (!cleanUsername || !cleanPassword || !cleanName) {
-      toast.error('يرجى ملء جميع الحقول');
+      toast.error('يرجى ملء جميع الحقول الإلزامية');
       return;
     }
 
@@ -55,12 +57,14 @@ export const UserManagement: React.FC<UserManagementProps> = ({ users, onAddUser
       username: cleanUsername,
       password: cleanPassword,
       name: cleanName,
+      phone: cleanPhone,
       role: newRole
     });
 
     setNewUsername('');
     setNewPassword('');
     setNewName('');
+    setNewPhone('');
     setShowAddForm(false);
     toast.success('تمت إضافة المستخدم بنجاح');
   };
@@ -110,6 +114,14 @@ export const UserManagement: React.FC<UserManagementProps> = ({ users, onAddUser
                   className="px-4 py-3 bg-white border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 font-bold ltr-input"
                 />
                 <input 
+                  id="user-phone-input"
+                  type="text" 
+                  placeholder="رقم الواتساب (مثال: 966500000000)"
+                  value={newPhone}
+                  onChange={(e) => setNewPhone(e.target.value)}
+                  className="px-4 py-3 bg-white border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 font-bold ltr-input"
+                />
+                <input 
                   id="user-password-input"
                   type="password" 
                   placeholder="الرمز السري (كلمة المرور)"
@@ -120,7 +132,7 @@ export const UserManagement: React.FC<UserManagementProps> = ({ users, onAddUser
                 <select 
                   value={newRole}
                   onChange={(e) => setNewRole(e.target.value as UserRole)}
-                  className="px-4 py-3 bg-white border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 font-bold"
+                  className="px-4 py-3 block bg-white border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 font-bold md:col-span-2"
                 >
                   <option value="viewer">مشاهد (عرض فقط)</option>
                   <option value="editor">محرّر (إضافة وتعديل)</option>
