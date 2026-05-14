@@ -71,7 +71,7 @@ export default function App() {
 
   // Sync Users
   useEffect(() => {
-    const unsub = onSnapshot(collection(db, 'users'), (snapshot) => {
+    const unsub = onSnapshot(collection(db, 'users'), { includeMetadataChanges: true }, (snapshot) => {
       const usersData = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id } as User));
       
       // Migration: Update 'المدير العام' to 'أيوب'
@@ -96,7 +96,10 @@ export default function App() {
       }
       
       setUsers(usersData);
-      setUsersLoaded(true);
+      
+      if (usersData.length > 0 || !snapshot.metadata.fromCache) {
+        setUsersLoaded(true);
+      }
     }, (error) => handleFirestoreError(error, OperationType.GET, 'users'));
     return () => unsub();
   }, []);
