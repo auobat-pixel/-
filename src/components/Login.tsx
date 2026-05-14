@@ -106,11 +106,16 @@ export const Login: React.FC<LoginProps> = ({ onLogin, users }) => {
 
             <button 
               type="submit" 
-              disabled={loading}
+              disabled={loading || users.length === 0}
               className="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-black text-lg shadow-xl shadow-blue-100 transition-all flex items-center justify-center gap-3 active:scale-95 disabled:opacity-70"
             >
               {loading ? (
                 <div className="w-6 h-6 border-4 border-white/30 border-t-white rounded-full animate-spin" />
+              ) : users.length === 0 ? (
+                <div className="flex items-center gap-2">
+                  <div className="w-5 h-5 border-4 border-white/30 border-t-white rounded-full animate-spin" />
+                  <span>جاري الاتصال بالنظام...</span>
+                </div>
               ) : (
                 <>
                   <span>دخول</span>

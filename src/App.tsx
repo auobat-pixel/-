@@ -81,8 +81,8 @@ export default function App() {
         }
       });
 
-      // Ensure default admin exists if collection is empty
-      if (usersData.length === 0) {
+      // Ensure default admin exists if collection is empty (only if not from cache)
+      if (usersData.length === 0 && !snapshot.metadata.fromCache) {
         const defaultAdmin: User = {
           id: 'admin-id',
           username: 'admin',
@@ -95,27 +95,33 @@ export default function App() {
       }
       
       setUsers(usersData);
-
-      // Sync current user state if data changed in Firestore
-      if (currentUser) {
-        const updatedSelf = usersData.find(u => u.id === currentUser.id);
-        if (updatedSelf) {
-          // Check for any changes to sync
-          const hasChanged = 
-            updatedSelf.name !== currentUser.name || 
-            updatedSelf.role !== currentUser.role || 
-            updatedSelf.password !== currentUser.password ||
-            updatedSelf.username !== currentUser.username;
-            
-          if (hasChanged) {
-            setCurrentUser(updatedSelf);
-            localStorage.setItem('aqaratek_current_user', JSON.stringify(updatedSelf));
-          }
-        }
-      }
     }, (error) => handleFirestoreError(error, OperationType.GET, 'users'));
     return () => unsub();
   }, []);
+
+  // Sync current user state if data changed in Firestore
+  useEffect(() => {
+    if (currentUser && users.length > 0) {
+      const updatedSelf = users.find(u => u.id === currentUser.id);
+      if (updatedSelf) {
+        // Check for any changes to sync
+        const hasChanged = 
+          updatedSelf.name !== currentUser.name || 
+          updatedSelf.role !== currentUser.role || 
+          updatedSelf.password !== currentUser.password ||
+          updatedSelf.username !== currentUser.username;
+          
+        if (hasChanged) {
+          setCurrentUser(updatedSelf);
+          localStorage.setItem('aqaratek_current_user', JSON.stringify(updatedSelf));
+        }
+      } else {
+        // User was deleted from the database
+        setCurrentUser(null);
+        localStorage.removeItem('aqaratek_current_user');
+      }
+    }
+  }, [users, currentUser]);
 
   // Sync Listings
   useEffect(() => {
