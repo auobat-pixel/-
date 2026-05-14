@@ -42,8 +42,23 @@ import {
 
 
 export default function App() {
-  const [users, setUsers] = useState<User[]>([]);
   const [usersLoaded, setUsersLoaded] = useState(false);
+  const [users, setUsers] = useState<User[]>([{
+    id: 'admin-id',
+    username: 'admin',
+    password: '123',
+    name: 'أيوب',
+    role: 'admin',
+    createdAt: new Date().toISOString()
+  }]);
+  
+  useEffect(() => {
+    // Timeout fallback if Firestore takes too long to connect
+    const timer = setTimeout(() => {
+      setUsersLoaded(true);
+    }, 4000);
+    return () => clearTimeout(timer);
+  }, []);
   const [currentUser, setCurrentUser] = useState<User | null>(() => {
     const saved = localStorage.getItem('aqaratek_current_user');
     return saved ? JSON.parse(saved) : null;
@@ -82,8 +97,8 @@ export default function App() {
         }
       });
 
-      // Ensure default admin exists if collection is empty (only if not from cache)
-      if (usersData.length === 0 && !snapshot.metadata.fromCache) {
+      // Ensure default admin exists if collection is empty
+      if (usersData.length === 0) {
         const defaultAdmin: User = {
           id: 'admin-id',
           username: 'admin',
@@ -92,15 +107,24 @@ export default function App() {
           role: 'admin',
           createdAt: new Date().toISOString()
         };
-        setDoc(doc(db, 'users', 'admin-id'), defaultAdmin).catch(err => handleFirestoreError(err, OperationType.WRITE, 'users/admin-id'));
+        
+        // Push to local state immediately so user can login even if offline
+        usersData.push(defaultAdmin);
+        
+        // Try to persist to Firestore
+        if (!snapshot.metadata.fromCache) {
+           setDoc(doc(db, 'users', 'admin-id'), defaultAdmin)
+             .catch(err => console.error('Failed to write default admin', err));
+        }
       }
       
       setUsers(usersData);
-      
-      if (usersData.length > 0 || !snapshot.metadata.fromCache) {
-        setUsersLoaded(true);
-      }
-    }, (error) => handleFirestoreError(error, OperationType.GET, 'users'));
+      setUsersLoaded(true);
+    }, (error) => {
+      console.error(error);
+      setUsersLoaded(true); // Don't block UI on error
+      handleFirestoreError(error, OperationType.GET, 'users');
+    });
     return () => unsub();
   }, []);
 
