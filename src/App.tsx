@@ -43,6 +43,7 @@ import {
 
 export default function App() {
   const [users, setUsers] = useState<User[]>([]);
+  const [usersLoaded, setUsersLoaded] = useState(false);
   const [currentUser, setCurrentUser] = useState<User | null>(() => {
     const saved = localStorage.getItem('aqaratek_current_user');
     return saved ? JSON.parse(saved) : null;
@@ -95,6 +96,7 @@ export default function App() {
       }
       
       setUsers(usersData);
+      setUsersLoaded(true);
     }, (error) => handleFirestoreError(error, OperationType.GET, 'users'));
     return () => unsub();
   }, []);
@@ -507,7 +509,7 @@ export default function App() {
     return (
       <>
         <Toaster position="top-center" />
-        <Login onLogin={handleLogin} users={users} />
+        <Login onLogin={handleLogin} users={users} usersLoaded={usersLoaded} />
       </>
     );
   }

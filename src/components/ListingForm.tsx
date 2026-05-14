@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { RealEstateListing } from '../types';
 import { MapPin, Tag, Gavel, Plus, Link as LinkIcon, Phone, FileText, Image as ImageIcon, X, Navigation, Building2 } from 'lucide-react';
 import { cn } from '../lib/utils.ts';
+import { compressImage } from '../lib/imageOptimization.ts';
 
 interface ListingFormProps {
   onAdd: (listing: Omit<RealEstateListing, 'id' | 'date'>) => void;
@@ -28,25 +29,31 @@ export const ListingForm: React.FC<ListingFormProps> = ({ onAdd, editingListing,
   const [dimEast, setDimEast] = useState('');
   const [dimWest, setDimWest] = useState('');
   
+  const [isCompressing, setIsCompressing] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const fileInputRef2 = useRef<HTMLInputElement>(null);
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>, imageNum: 1 | 2) => {
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>, imageNum: 1 | 2) => {
     const file = e.target.files?.[0];
     if (file) {
-      if (file.size > 2 * 1024 * 1024) {
-        alert("حجم الصورة كبير جداً (الحد الأقصى 2 ميجابايت)");
+      if (file.size > 8 * 1024 * 1024) {
+        alert("حجم الصورة كبير جداً (الحد الأقصى 8 ميجابايت قبل الضغط)");
         return;
       }
-      const reader = new FileReader();
-      reader.onloadend = () => {
+      setIsCompressing(true);
+      try {
+        const compressedBase64 = await compressImage(file, 1280, 1280, 0.7);
         if (imageNum === 1) {
-          setImageUrl(reader.result as string);
+          setImageUrl(compressedBase64);
         } else {
-          setImageUrl2(reader.result as string);
+          setImageUrl2(compressedBase64);
         }
-      };
-      reader.readAsDataURL(file);
+      } catch (error) {
+        console.error("Error compressing image:", error);
+        alert("حدث خطأ أثناء معالجة الصورة. يرجى المحاولة بصورة أخرى.");
+      } finally {
+        setIsCompressing(false);
+      }
     }
   };
 
