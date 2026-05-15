@@ -1,10 +1,10 @@
 {
-  "projectId": "gen-lang-client-0040154281",
-  "appId": "1:258091804104:web:2473522d9eb0954e9b8cfd",
-  "apiKey": "AIzaSyCVJ8imwsdWDj93oXoTchcsgq5nyy7D9HA",
-  "authDomain": "gen-lang-client-0040154281.firebaseapp.com",
+  "projectId": "my-offers-aabda",
+  "appId": "1:15443829389:web:ba91c735c3811f517ef8c4",
+  "apiKey": "AIzaSyBv_3_EckiyEwYN8sd2Gc66EMdyuCJ8MwU",
+  "authDomain": "my-offers-aabda.firebaseapp.com",
   "firestoreDatabaseId": "ai-studio-fc5c368d-7709-4ed3-9fdf-6d00258af5ef",
-  "storageBucket": "gen-lang-client-0040154281.firebasestorage.app",
-  "messagingSenderId": "258091804104",
+  "storageBucket": "my-offers-aabda.firebasestorage.app",
+  "messagingSenderId": "15443829389",
   "measurementId": ""
 }

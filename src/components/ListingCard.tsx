@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { RealEstateListing } from '../types';
 import { formatCurrency } from '../lib/utils.ts';
-import { MapPin, Building2, Share2, Trash2, Map, Navigation, Phone, MessageCircle, FileText, Copy, Edit2, Calendar, MessageSquare, Heart } from 'lucide-react';
-import { motion } from 'motion/react';
+import { MapPin, Building2, Share2, Trash2, Map, Navigation, Phone, MessageCircle, FileText, Copy, Edit2, Calendar, MessageSquare, Heart, ChevronDown, ChevronUp } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
 import { toast } from 'react-hot-toast';
 
 interface ListingCardProps {
@@ -20,6 +20,7 @@ interface ListingCardProps {
 
 export const ListingCard: React.FC<ListingCardProps> = ({ listing, onShare, onDelete, onEdit, onScheduleViewing, onViewComments, onToggleFavorite, currentUserId, isAdmin, canEdit }) => {
   const isFavorite = listing.favoritedBy?.includes(currentUserId) || false;
+  const [isQuickViewOpen, setIsQuickViewOpen] = useState(false);
 
   const whatsappUrl = listing.contactPhone 
     ? `https://wa.me/${listing.contactPhone.replace(/^0/, '966')}` 
@@ -150,15 +151,69 @@ export const ListingCard: React.FC<ListingCardProps> = ({ listing, onShare, onDe
           )}
         </div>
 
-        {/* Source info (Admin Only) */}
-        {listing.source && isAdmin && (
-          <div className="mb-4 p-3 bg-blue-50/50 rounded-2xl border border-blue-100/50">
-             <p className="text-[10px] text-blue-400 font-black uppercase mb-1">المصدر الخاص</p>
-             <p className="text-xs text-blue-700 font-bold leading-relaxed">
-               {listing.source}
-             </p>
-          </div>
-        )}
+        {/* Quick View Accordion */}
+        <div className="mb-6">
+          <button
+            onClick={() => setIsQuickViewOpen(!isQuickViewOpen)}
+            className="w-full flex items-center justify-between p-3 bg-slate-50 hover:bg-slate-100 rounded-2xl border border-slate-100 transition-colors"
+          >
+            <span className="text-sm font-black text-slate-700">التفاصيل السريعة</span>
+            {isQuickViewOpen ? <ChevronUp size={16} className="text-slate-500" /> : <ChevronDown size={16} className="text-slate-500" />}
+          </button>
+          
+          <AnimatePresence>
+            {isQuickViewOpen && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                className="overflow-hidden"
+              >
+                <div className="p-4 mt-2 bg-slate-50 rounded-2xl border border-slate-100 space-y-4">
+                  {/* Additional info like area, notes, dimensions */}
+                  <div className="grid grid-cols-2 gap-3">
+                    {listing.area && (
+                      <div>
+                        <span className="text-[10px] text-slate-400 block mb-1 font-black">المساحة</span>
+                        <span className="text-sm font-bold text-slate-700">{listing.area} م²</span>
+                      </div>
+                    )}
+                    {(listing.dimNorth || listing.dimSouth || listing.dimEast || listing.dimWest) && (
+                      <div className="col-span-2">
+                        <span className="text-[10px] text-slate-400 block mb-1 font-black">الأطوال</span>
+                        <div className="grid grid-cols-4 gap-2 text-xs font-bold text-slate-700 bg-white p-2 rounded-xl border border-slate-100">
+                          <div className="text-center">ش: {listing.dimNorth || '-'}</div>
+                          <div className="text-center">ج: {listing.dimSouth || '-'}</div>
+                          <div className="text-center">ق: {listing.dimEast || '-'}</div>
+                          <div className="text-center">غ: {listing.dimWest || '-'}</div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                  
+                  {listing.notes && (
+                    <div>
+                      <span className="text-[10px] text-slate-400 block mb-1 font-black">ملاحظات</span>
+                      <p className="text-sm font-medium text-slate-700 leading-relaxed bg-white p-3 rounded-xl border border-slate-100">
+                        {listing.notes}
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Source info (Admin Only) */}
+                  {listing.source && isAdmin && (
+                    <div className="p-3 bg-blue-50/50 rounded-xl border border-blue-100/50">
+                       <p className="text-[10px] text-blue-400 font-black uppercase mb-1">المصدر الخاص</p>
+                       <p className="text-xs text-blue-700 font-bold leading-relaxed">
+                         {listing.source}
+                       </p>
+                    </div>
+                  )}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
 
         {/* Pricing Dashboard */}
         <div className="grid grid-cols-2 gap-3 mb-6">
