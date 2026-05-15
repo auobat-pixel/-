@@ -505,7 +505,7 @@ export default function App() {
       await new Promise(resolve => setTimeout(resolve, 1000));
       const element = shareCardRef.current;
       const dataUrl = await toPng(element, {
-        pixelRatio: 3,
+        pixelRatio: 4,
         backgroundColor: '#f8fafc',
         cacheBust: true,
       });
