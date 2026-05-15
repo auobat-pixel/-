@@ -24,6 +24,7 @@ export interface RealEstateListing {
   imageUrl?: string;
   imageUrl2?: string;
   contactPhone?: string;
+  marketerName?: string;
   notes?: string;
   area?: number;               // المساحة بالمتر المربع
   salePrice?: number; // سعر البيع أو الحد

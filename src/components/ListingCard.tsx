@@ -16,9 +16,10 @@ interface ListingCardProps {
   currentUserId: string;
   isAdmin: boolean;
   canEdit: boolean;
+  canDelete?: boolean;
 }
 
-export const ListingCard: React.FC<ListingCardProps> = ({ listing, onShare, onDelete, onEdit, onScheduleViewing, onViewComments, onToggleFavorite, currentUserId, isAdmin, canEdit }) => {
+export const ListingCard: React.FC<ListingCardProps> = ({ listing, onShare, onDelete, onEdit, onScheduleViewing, onViewComments, onToggleFavorite, currentUserId, isAdmin, canEdit, canDelete = false }) => {
   const isFavorite = listing.favoritedBy?.includes(currentUserId) || false;
   const [isQuickViewOpen, setIsQuickViewOpen] = useState(false);
 
@@ -27,29 +28,54 @@ export const ListingCard: React.FC<ListingCardProps> = ({ listing, onShare, onDe
     : null;
 
   const copyTextSummary = () => {
-    const text = `
-*عرض عقاري*
-📍 الموقع: ${listing.location}
-🏘 النوع: ${listing.type}
-🧭 الموقع في المدينة: ${listing.direction || 'غير محدد'}
-📏 المساحة: ${listing.area ? listing.area + ' م²' : 'غير محدد'}
----
-📐 أطوال الأضلاع:
-• شمال: ${listing.dimNorth || '-'}
-• جنوب: ${listing.dimSouth || '-'}
-• شرق: ${listing.dimEast || '-'}
-• غرب: ${listing.dimWest || '-'}
----
-💰 سعر البيع: ${listing.salePrice ? formatCurrency(listing.salePrice) : 'غير محدد'}
-📉 السوم: ${listing.bidPrice ? formatCurrency(listing.bidPrice) : 'لا يوجد'}
----
-📞 للتواصل: ${listing.contactPhone || 'غير محدد'}
-📝 ملاحظات: ${listing.notes || 'لا يوجد'}
-🌍 موقع العقار: ${listing.googleMapsUrl || 'لا يوجد رابط'}
-    `.trim();
+    const salePrice = listing.salePrice || 0;
+    const area = listing.area || 0;
+    const totalWithTaxAndFee = salePrice * 1.075;
+    const pricePerMeterNet = area > 0 ? salePrice / area : 0;
+    const pricePerMeterTotal = area > 0 ? totalWithTaxAndFee / area : 0;
+
+    let text = `*✨ عرض عقاري | ${listing.type} ✨*\n\n`;
+    text += `📍 *الموقع:* ${listing.location}\n`;
+    if (listing.direction) text += `🧭 *الواجهة:* ${listing.direction}\n`;
+    if (area > 0) text += `📏 *المساحة:* ${area} م²\n`;
+    
+    text += `\n*📐 أطوال الأضلاع:*\n`;
+    text += `• شمالاً: ${listing.dimNorth || '-'}\n`;
+    text += `• جنوباً: ${listing.dimSouth || '-'}\n`;
+    text += `• شرقاً: ${listing.dimEast || '-'}\n`;
+    text += `• غرباً: ${listing.dimWest || '-'}\n`;
+
+    text += `\n*💰 تفاصيل السعر:*\n`;
+    if (salePrice > 0) {
+      text += `• السعر المطلوب (صافي): *${formatCurrency(salePrice)}*\n`;
+      text += `• السعر الإجمالي (شامل 7.5% ضريبة وسعي): *${formatCurrency(Math.round(totalWithTaxAndFee))}*\n`;
+      if (area > 0) {
+        text += `• سعر المتر (صافي): ${formatCurrency(Math.round(pricePerMeterNet))}\n`;
+        text += `• سعر المتر (شامل): ${formatCurrency(Math.round(pricePerMeterTotal))}\n`;
+      }
+    } else {
+      text += `• السعر المطلوب: *على السوم*\n`;
+    }
+
+    if (listing.bidPrice) {
+      text += `• السوم: ${formatCurrency(listing.bidPrice)}\n`;
+    }
+
+    if (listing.notes) {
+      text += `\n*📝 ملاحظات:*\n${listing.notes}\n`;
+    }
+
+    text += `\n*📞 للتواصل مع المسوق: ${listing.marketerName || ''}*\n`;
+    text += `الرقم: ${listing.contactPhone || '-'}\n`;
+
+    if (listing.googleMapsUrl) {
+      text += `\n*🌍 رابط الموقع (خرائط جوجل):*\n${listing.googleMapsUrl}\n`;
+    }
+    
+    text += `\n_تم إنشاء الإعلان عبر منصة عروضي العقارية_`;
 
     navigator.clipboard.writeText(text);
-    toast.success('تم نسخ نص العرض مع رابط الموقع');
+    toast.success('تم نسخ الإعلان بنجاح، يمكنك الآن مشاركته في الواتساب');
   };
 
   return (
@@ -107,7 +133,6 @@ export const ListingCard: React.FC<ListingCardProps> = ({ listing, onShare, onDe
         {/* Edit/Delete Floating Controls */}
         <div className="absolute top-16 left-4 flex flex-col gap-2 translate-x-[-10px] opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-300 z-10">
           {canEdit && (
-            <>
               <button 
                 onClick={() => onEdit(listing)}
                 className="w-9 h-9 flex items-center justify-center bg-white/90 backdrop-blur-sm text-slate-600 hover:text-blue-600 rounded-xl shadow-sm transition-all active:scale-90"
@@ -115,6 +140,8 @@ export const ListingCard: React.FC<ListingCardProps> = ({ listing, onShare, onDe
               >
                 <Edit2 size={16} />
               </button>
+          )}
+          {canDelete && (
               <button 
                 onClick={() => onDelete(listing.id)}
                 className="w-9 h-9 flex items-center justify-center bg-white/90 backdrop-blur-sm text-slate-600 hover:text-red-500 rounded-xl shadow-sm transition-all active:scale-90"
@@ -122,7 +149,6 @@ export const ListingCard: React.FC<ListingCardProps> = ({ listing, onShare, onDe
               >
                 <Trash2 size={16} />
               </button>
-            </>
           )}
         </div>
       </div>

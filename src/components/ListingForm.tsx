@@ -17,6 +17,7 @@ export const ListingForm: React.FC<ListingFormProps> = ({ onAdd, editingListing,
   const [direction, setDirection] = useState('');
   const [googleMapsUrl, setGoogleMapsUrl] = useState('');
   const [contactPhone, setContactPhone] = useState('');
+  const [marketerName, setMarketerName] = useState('');
   const [source, setSource] = useState('');
   const [notes, setNotes] = useState('');
   const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
@@ -65,6 +66,7 @@ export const ListingForm: React.FC<ListingFormProps> = ({ onAdd, editingListing,
       setDirection(editingListing.direction || '');
       setGoogleMapsUrl(editingListing.googleMapsUrl || '');
       setContactPhone(editingListing.contactPhone || '');
+      setMarketerName(editingListing.marketerName || '');
       setSource(editingListing.source || '');
       setNotes(editingListing.notes || '');
       setImageUrl(editingListing.imageUrl);
@@ -112,6 +114,7 @@ export const ListingForm: React.FC<ListingFormProps> = ({ onAdd, editingListing,
       direction: direction || undefined,
       googleMapsUrl: googleMapsUrl || undefined,
       contactPhone: contactPhone || undefined,
+      marketerName: marketerName || undefined,
       source: source || undefined,
       notes: notes || undefined,
       imageUrl,
@@ -266,6 +269,19 @@ export const ListingForm: React.FC<ListingFormProps> = ({ onAdd, editingListing,
               value={contactPhone}
               onChange={(e) => setContactPhone(e.target.value)}
               className="w-full pr-10 pl-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-1">اسم المسوق</label>
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="مثال: أحمد عبد الله"
+              value={marketerName}
+              onChange={(e) => setMarketerName(e.target.value)}
+              className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
             />
           </div>
         </div>

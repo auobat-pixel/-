@@ -20,7 +20,7 @@ import { ConfirmationModal } from './components/ConfirmationModal.tsx';
 import { Toaster, toast } from 'react-hot-toast';
 import { motion, AnimatePresence } from 'motion/react';
 import { toPng } from 'html-to-image';
-import { LayoutGrid, X, Building, Share2, Search, TrendingUp, Wallet, LogOut, Users, Calendar, Bell, Lock, Menu, ChevronDown, Heart } from 'lucide-react';
+import { LayoutGrid, X, Building, Share2, Search, TrendingUp, Wallet, LogOut, Users, Calendar, Bell, Lock, Menu, ChevronDown, Heart, Plus } from 'lucide-react';
 import { cn, formatCurrency } from './lib/utils.ts';
 import { db, cleanData, handleFirestoreError, OperationType } from './lib/firebase.ts';
 import { 
@@ -72,6 +72,7 @@ export default function App() {
   const [showCalendar, setShowCalendar] = useState(false);
   const [showAlerts, setShowAlerts] = useState(false);
   const [showChangePassword, setShowChangePassword] = useState(false);
+  const [showAddListingModal, setShowAddListingModal] = useState(false);
   const [schedulingListing, setSchedulingListing] = useState<RealEstateListing | null>(null);
   const [editingListing, setEditingListing] = useState<RealEstateListing | null>(null);
   const [sharingListing, setSharingListing] = useState<RealEstateListing | null>(null);
@@ -437,6 +438,7 @@ export default function App() {
       }));
 
       toast.success('تمت إضافة العرض بنجاح');
+      setShowAddListingModal(false);
       setShowWhatsAppBroadcast(newListing);
     } catch (error) {
       handleFirestoreError(error, OperationType.CREATE, 'listings');
@@ -448,8 +450,8 @@ export default function App() {
       const listing = listings.find(l => l.id === id);
       if (!listing) return;
 
-      if (currentUser?.role !== 'admin' && listing.createdBy !== currentUser?.id) {
-        toast.error('ليس لديك صلاحية لتعديل هذا العرض');
+      if (listing.createdBy !== currentUser?.id) {
+        toast.error('لا يمكنك تعديل هذا العرض - التعديل متاح فقط لمن أضافه');
         return;
       }
 
@@ -712,15 +714,19 @@ export default function App() {
           </motion.div>
         </div>
 
-        <div className="grid gap-10 items-start lg:grid-cols-[400px_1fr]">
+        <div className="grid gap-10 items-start lg:grid-cols-[350px_1fr]">
           <aside className="lg:sticky lg:top-24 space-y-6">
             {currentUser.role !== 'viewer' ? (
-              <ListingForm 
-                onAdd={addListing} 
-                editingListing={editingListing} 
-                onUpdate={updateListing}
-                onCancelEdit={() => setEditingListing(null)}
-              />
+               <button 
+                 onClick={() => setShowAddListingModal(true)}
+                 className="w-full bg-blue-600 hover:bg-blue-700 text-white p-8 rounded-[2.5rem] shadow-xl shadow-blue-100 flex flex-col items-center justify-center gap-4 transition-all hover:-translate-y-1"
+               >
+                 <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center text-white mb-2">
+                   <Plus size={32} />
+                 </div>
+                 <h2 className="text-2xl font-black">إضافة عرض عقاري جديد</h2>
+                 <p className="text-blue-100 text-center font-medium">قم بإضافة وتفصيل معلومات العرض العقاري لإنشاء بطاقة تسويقية ذكية ومميزة</p>
+               </button>
             ) : (
               <div className="p-8 bg-white rounded-[2.5rem] border border-slate-100 shadow-sm text-center">
                 <div className="w-16 h-16 bg-slate-50 text-slate-300 rounded-2xl flex items-center justify-center mx-auto mb-4">
@@ -803,7 +809,8 @@ export default function App() {
                       onToggleFavorite={toggleFavorite}
                       currentUserId={currentUser.id}
                       isAdmin={currentUser.role === 'admin'}
-                      canEdit={currentUser.role !== 'viewer' && (currentUser.role === 'admin' || listing.createdBy === currentUser.id)}
+                      canEdit={listing.createdBy === currentUser.id}
+                      canDelete={currentUser.role !== 'viewer' && (currentUser.role === 'admin' || listing.createdBy === currentUser.id)}
                     />
                   ))}
                 </AnimatePresence>
@@ -900,6 +907,38 @@ export default function App() {
           }}
           onCancel={() => setListingToDeleteId(null)}
         />
+        
+        {(showAddListingModal || editingListing) && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm" dir="rtl">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="bg-white rounded-[2.5rem] shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto relative"
+            >
+              <button 
+                onClick={() => {
+                  setShowAddListingModal(false);
+                  setEditingListing(null);
+                }}
+                className="absolute top-6 left-6 p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full transition-colors z-10"
+              >
+                <X size={24} />
+              </button>
+              <div className="p-1">
+                <ListingForm 
+                  onAdd={addListing} 
+                  editingListing={editingListing} 
+                  onUpdate={updateListing}
+                  onCancelEdit={() => {
+                    setEditingListing(null);
+                    setShowAddListingModal(false);
+                  }}
+                />
+              </div>
+            </motion.div>
+          </div>
+        )}
       </AnimatePresence>
 
       <footer className="text-center py-12 border-t border-slate-100 mt-20">
