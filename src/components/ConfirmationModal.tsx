@@ -31,7 +31,7 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
             initial={{ opacity: 0, scale: 0.95, y: 10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 10 }}
-            className="bg-white rounded-[2rem] shadow-2xl p-8 max-w-sm w-full relative overflow-hidden"
+            className="bg-[#F6F6F0] rounded-[2rem] shadow-2xl p-8 max-w-sm w-full relative overflow-hidden"
           >
             {/* Visual Header */}
             <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-6 ${

@@ -200,7 +200,7 @@ export default function App() {
           // Only show if it's new (created after component mount) and not by current user
           if (notification.createdAt > mountTimeRef.current && notification.createdBy !== currentUser.id) {
             toast.custom((t) => (
-              <div className={`${t.visible ? 'animate-enter' : 'animate-leave'} max-w-md w-full bg-white shadow-2xl rounded-[1.5rem] pointer-events-auto flex ring-1 ring-black ring-opacity-5 border-r-4 border-blue-600`}>
+              <div className={`${t.visible ? 'animate-enter' : 'animate-leave'} max-w-md w-full bg-[#F6F6F0] shadow-2xl rounded-[1.5rem] pointer-events-auto flex ring-1 ring-black ring-opacity-5 border-r-4 border-blue-600`}>
                 <div className="flex-1 w-0 p-4">
                   <div className="flex items-start">
                     <div className="flex-shrink-0 pt-0.5">
@@ -559,7 +559,7 @@ export default function App() {
         )}
       </div>
       
-      <header className="bg-white/80 backdrop-blur-md border-b border-slate-100 sticky top-0 z-40 px-4 py-3 md:py-4">
+      <header className="bg-[#F6F6F0]/80 backdrop-blur-md border-b border-slate-100 sticky top-0 z-40 px-4 py-3 md:py-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-4">
              <motion.div 
@@ -609,7 +609,7 @@ export default function App() {
                     initial={{ opacity: 0, y: 10, scale: 0.95 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                    className="absolute left-0 mt-2 w-56 bg-white rounded-2xl shadow-2xl border border-slate-100 py-3 z-50 origin-top-left overflow-hidden"
+                    className="absolute left-0 mt-2 w-56 bg-[#F6F6F0] rounded-2xl shadow-2xl border border-slate-100 py-3 z-50 origin-top-left overflow-hidden"
                   >
                     <button 
                       onClick={() => { setShowCalendar(true); setShowManagementDropdown(false); }}
@@ -920,7 +920,7 @@ export default function App() {
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="bg-white rounded-[2.5rem] shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto relative"
+              className="bg-[#F6F6F0] rounded-[2.5rem] shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto relative"
             >
               <button 
                 onClick={() => {
