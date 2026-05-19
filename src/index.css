@@ -1,10 +1,48 @@
-@import url('https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Tajawal:wght@400;500;700;800;900&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Noto Naskh Arabic", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Outfit", "Tajawal", ui-sans-serif, system-ui, sans-serif;
   --radius-xl: 1rem;
   --radius-2xl: 1.5rem;
+
+  --color-white: #FFFEFA;
+
+  /* Brand Warm Gray (Slate Replacement) */
+  --color-slate-50: #F7F6F1;
+  --color-slate-100: #ECEBE4;
+  --color-slate-200: #DCD9CE;
+  --color-slate-300: #C7C3B5;
+  --color-slate-400: #ABA696;
+  --color-slate-500: #938E7E;
+  --color-slate-600: #757062;
+  --color-slate-700: #5E5A4E;
+  --color-slate-800: #47443A;
+  --color-slate-900: #333029;
+
+  /* Brand Slate Blue (Blue Replacement) */
+  --color-blue-50: #F0F3F5;
+  --color-blue-100: #DCE3E8;
+  --color-blue-200: #BCCBD5;
+  --color-blue-300: #96AEC0;
+  --color-blue-400: #7490A6;
+  --color-blue-500: #5C7C96;
+  --color-blue-600: #4B6880;
+  --color-blue-700: #3E566B;
+  --color-blue-800: #354758;
+  --color-blue-900: #2E3D4B;
+
+  /* Brand Olive Green (Green Replacement) */
+  --color-green-50: #F2F5F3;
+  --color-green-100: #DFE8E1;
+  --color-green-200: #C1D2C4;
+  --color-green-300: #9FB6A4;
+  --color-green-400: #88A58D;
+  --color-green-500: #75967E;
+  --color-green-600: #5D7A65;
+  --color-green-700: #4A6351;
+  --color-green-800: #3E5244;
+  --color-green-900: #334439;
 }
 
 @layer base {

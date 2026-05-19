@@ -544,7 +544,13 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen pb-20 bg-slate-50 font-sans" dir="rtl">
+    <div className="min-h-screen pb-20 bg-slate-50 font-sans relative overflow-x-hidden w-full" dir="rtl">
+      
+      {/* Background Watermark Logo */}
+      <div className="fixed inset-0 flex items-center justify-center opacity-[0.03] pointer-events-none z-0">
+        <img src="/logo.png" alt="عروضي" className="w-[80vw] h-[80vw] max-w-[800px] max-h-[800px] object-contain opacity-5 grayscale sepia brightness-50 contrast-125" />
+      </div>
+
       <Toaster position="top-center" />
       
       <div className="fixed -left-[2000px] top-0 pointer-events-none" aria-hidden="true">
@@ -553,14 +559,14 @@ export default function App() {
         )}
       </div>
       
-      <header className="bg-white border-b border-slate-100 sticky top-0 z-40 px-4 py-3 md:py-4">
+      <header className="bg-white/80 backdrop-blur-md border-b border-slate-100 sticky top-0 z-40 px-4 py-3 md:py-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-4">
              <motion.div 
                whileHover={{ scale: 1.05 }}
-               className="w-10 h-10 bg-blue-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-blue-100"
+               className="w-12 h-12 flex items-center justify-center"
              >
-               <Building size={24} />
+               <img src="/logo.png" alt="عروضي" className="w-full h-full object-contain" />
              </motion.div>
              <div>
                <h1 className="text-xl font-black text-slate-900 tracking-tight leading-none mb-1">عروضي</h1>

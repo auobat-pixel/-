@@ -18,26 +18,20 @@ export const ShareCard: React.FC<ShareCardProps> = ({ listing, cardRef }) => {
 
   return (
     <div className="flex justify-center p-4 bg-slate-900 overflow-hidden">
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;500;600;700&display=swap');
-        .naskh-font {
-          font-family: 'Noto Naskh Arabic', serif !important;
-        }
-        .digits-sans {
-          font-family: system-ui, -apple-system, sans-serif !important;
-          letter-spacing: -0.02em;
-        }
-      `}</style>
-
       {/* FIXED MOBILE WALLPAPER DIMENSION: 1080 x 1920 */}
       <div 
         ref={cardRef}
-        className="w-[1080px] h-[1920px] bg-[#fdfdfd] relative overflow-hidden flex flex-col shadow-2xl naskh-font text-slate-800"
+        className="w-[1080px] h-[1920px] bg-slate-100/50 relative overflow-hidden flex flex-col shadow-2xl font-sans text-slate-800"
         style={{ direction: 'rtl' }}
       >
         
         {/* Subtle unified background texture/gradient */}
-        <div className="absolute inset-0 bg-gradient-to-b from-slate-50 via-[#fdfdfd] to-[#f4f7f9] pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-50 via-slate-100/50 to-slate-200/30 pointer-events-none" />
+        
+        {/* Watermark Logo */}
+        <div className="absolute inset-0 flex items-center justify-center opacity-[0.04] pointer-events-none z-0">
+          <img src="/logo.png" alt="عروضي" className="w-[800px] h-[800px] object-contain grayscale sepia brightness-50 contrast-125 opacity-20" />
+        </div>
 
         {/* HERO IMAGE SECTION (Edge to Edge) */}
         <div className="relative w-full h-[600px] shrink-0 flex bg-slate-100">
@@ -49,13 +43,18 @@ export const ShareCard: React.FC<ShareCardProps> = ({ listing, cardRef }) => {
                <p className="text-4xl font-bold uppercase">لا تـوجد صور مـرفقة</p>
             </div>
           )}
+          {/* Top Right Logo over Image */}
+          <div className="absolute top-8 right-8 z-20 bg-white/90 backdrop-blur-md p-4 rounded-3xl shadow-xl shadow-black/10 border-4 border-white">
+            <img src="/logo.png" alt="عروضي" className="w-24 h-24 object-contain" />
+          </div>
+
           {listing.imageUrl2 && (
-            <div className="absolute top-8 left-8 w-[240px] h-[240px] rounded-[2.5rem] overflow-hidden border-[8px] border-white shadow-2xl">
+            <div className="absolute top-8 left-8 z-20 w-[240px] h-[240px] rounded-[2.5rem] overflow-hidden border-[8px] border-white shadow-2xl">
               <img src={listing.imageUrl2} className="w-full h-full object-cover" alt="Second View" />
             </div>
           )}
           {/* Gradient Overlay to blend image nicely into background */}
-          <div className="absolute bottom-0 w-full h-32 bg-gradient-to-t from-[#fdfdfd] to-transparent" />
+          <div className="absolute bottom-0 w-full h-32 bg-gradient-to-t from-[#fdfdfd] to-transparent z-10" />
         </div>
 
         {/* CONTENT SECTION */}
