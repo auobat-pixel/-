@@ -197,8 +197,8 @@ export default function App() {
       snapshot.docChanges().forEach((change) => {
         if (change.type === 'added') {
           const notification = change.doc.data();
-          // Only show if it's new (created after component mount) and not by current user
-          if (notification.createdAt > mountTimeRef.current && notification.createdBy !== currentUser.id) {
+          // Only show if it's new (created after component mount)
+          if (notification.createdAt > mountTimeRef.current) {
             toast.custom((t) => (
               <div className={`${t.visible ? 'animate-enter' : 'animate-leave'} max-w-md w-full bg-[#F6F6F0] shadow-2xl rounded-[1.5rem] pointer-events-auto flex ring-1 ring-black ring-opacity-5 border-r-4 border-blue-600`}>
                 <div className="flex-1 w-0 p-4">
@@ -429,7 +429,15 @@ export default function App() {
       
       const newListing = { ...listingData, id: docRef.id } as RealEstateListing;
 
-      // Create notification for all users
+      // Create alert for all users in the notifications panel
+      await addAlert({
+        title: 'عرض عقاري جديد!',
+        message: `تمت إضافة ${data.type} جديد في حّي ${data.location} من قبل ${currentUser?.name}`,
+        type: 'offer',
+        createdBy: currentUser?.id || 'system'
+      });
+
+      // Create toast notification for all users
       await addDoc(collection(db, 'notifications'), cleanData({
         title: 'عرض عقاري جديد!',
         message: `تمت إضافة ${data.type} جديد في حّي ${data.location} من قبل ${currentUser?.name}`,
