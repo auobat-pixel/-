@@ -199,6 +199,32 @@ export default function App() {
           const notification = change.doc.data();
           // Only show if it's new (created after component mount)
           if (notification.createdAt > mountTimeRef.current) {
+            
+            // Trigger system push notification
+            if ("Notification" in window && Notification.permission === "granted") {
+              try {
+                navigator.serviceWorker.getRegistration().then((reg) => {
+                  if (reg) {
+                    reg.showNotification(notification.title, {
+                      body: notification.message,
+                      icon: '/logo.png',
+                      vibrate: [200, 100, 200]
+                    });
+                  } else {
+                    new Notification(notification.title, {
+                      body: notification.message,
+                      icon: '/logo.png'
+                    });
+                  }
+                });
+              } catch (e) {
+                new Notification(notification.title, {
+                  body: notification.message,
+                  icon: '/logo.png'
+                });
+              }
+            }
+
             toast.custom((t) => (
               <div className={`${t.visible ? 'animate-enter' : 'animate-leave'} max-w-md w-full bg-[#F6F6F0] shadow-2xl rounded-[1.5rem] pointer-events-auto flex ring-1 ring-black ring-opacity-5 border-r-4 border-blue-600`}>
                 <div className="flex-1 w-0 p-4">
@@ -645,6 +671,21 @@ export default function App() {
                       <Heart size={18} fill={filterFavorites ? 'currentColor' : 'none'} className={filterFavorites ? 'text-red-600' : ''} />
                       <span>المفضلة</span>
                     </button>
+
+                    {"Notification" in window && Notification.permission !== "granted" && Notification.permission !== "denied" && (
+                      <button 
+                        onClick={() => { 
+                          Notification.requestPermission().then(p => {
+                            if (p === 'granted') toast.success('تم تفعيل إشعارات النظام بنجاح');
+                          });
+                          setShowManagementDropdown(false); 
+                        }}
+                        className="w-full flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-emerald-50 hover:text-emerald-600 transition-colors text-right font-bold"
+                      >
+                        <Bell size={18} />
+                        <span>تفعيل إشعارات النظام</span>
+                      </button>
+                    )}
 
                     {currentUser.role === 'admin' && (
                       <button 
