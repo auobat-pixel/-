@@ -292,6 +292,9 @@ export default function App() {
   const handleLogin = (user: User) => {
     setCurrentUser(user);
     localStorage.setItem('aqaratek_current_user', JSON.stringify(user));
+    if ("Notification" in window && Notification.permission !== "granted" && Notification.permission !== "denied") {
+      Notification.requestPermission().catch(console.error);
+    }
   };
 
   const [showManagementDropdown, setShowManagementDropdown] = useState(false);
