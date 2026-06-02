@@ -687,23 +687,25 @@ export default function App() {
                       </button>
                     )}
 
-                    {"Notification" in window && Notification.permission === "granted" && (
-                      <button 
-                        onClick={async () => {
-                          setShowManagementDropdown(false); 
-                          await addDoc(collection(db, 'notifications'), cleanData({
-                            title: 'إشعار تجريبي!',
-                            message: `هذا إشعار تجريبي لاختبار النظام`,
-                            createdAt: new Date().toISOString(),
-                            createdBy: currentUser?.id || 'system'
-                          }));
-                        }}
-                        className="w-full flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600 transition-colors text-right font-bold"
-                      >
-                        <Bell size={18} />
-                        <span>إرسال إشعار تجريبي</span>
-                      </button>
-                    )}
+                    <button 
+                      onClick={async () => {
+                        setShowManagementDropdown(false); 
+                        if ("Notification" in window && Notification.permission !== "granted" && Notification.permission !== "denied") {
+                            await Notification.requestPermission();
+                        }
+                        await addDoc(collection(db, 'notifications'), cleanData({
+                          title: 'إشعار تجريبي!',
+                          message: `هذا إشعار تجريبي لاختبار النظام`,
+                          createdAt: new Date().toISOString(),
+                          createdBy: currentUser?.id || 'system'
+                        }));
+                        toast.success('تم إرسال الإشعار التجريبي');
+                      }}
+                      className="w-full flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600 transition-colors text-right font-bold"
+                    >
+                      <Bell size={18} />
+                      <span>إرسال إشعار تجريبي</span>
+                    </button>
 
                     {currentUser.role === 'admin' && (
                       <button 
