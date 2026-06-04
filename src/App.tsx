@@ -534,8 +534,8 @@ export default function App() {
 
   const stats = {
     total: listings.length,
-    totalValue: listings.reduce((acc, curr) => acc + (curr.salePrice || 0), 0),
-    avgPrice: listings.length > 0 ? listings.reduce((acc, curr) => acc + (curr.salePrice || 0), 0) / listings.length : 0
+    totalValue: listings.reduce((acc, curr) => acc + (curr.bidPrice || 0), 0),
+    avgPrice: listings.length > 0 ? listings.reduce((acc, curr) => acc + (curr.bidPrice || 0), 0) / listings.length : 0
   };
 
   const handleDownload = async (listingToDownload: RealEstateListing) => {

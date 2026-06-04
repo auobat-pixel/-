@@ -28,12 +28,6 @@ export const ListingCard: React.FC<ListingCardProps> = ({ listing, onShare, onDe
     : null;
 
   const copyTextSummary = () => {
-    const salePrice = listing.salePrice || 0;
-    const area = listing.area || 0;
-    const totalWithTaxAndFee = salePrice * 1.075;
-    const pricePerMeterNet = area > 0 ? salePrice / area : 0;
-    const pricePerMeterTotal = area > 0 ? totalWithTaxAndFee / area : 0;
-
     let text = `*✨ عرض عقاري | ${listing.type} ✨*\n\n`;
     text += `📍 *الموقع:* ${listing.location}\n`;
     if (listing.direction) text += `🧭 *الواجهة:* ${listing.direction}\n`;
@@ -46,19 +40,8 @@ export const ListingCard: React.FC<ListingCardProps> = ({ listing, onShare, onDe
     text += `• غرباً: ${listing.dimWest || '-'}\n`;
 
     text += `\n*💰 تفاصيل السعر:*\n`;
-    if (salePrice > 0) {
-      text += `• السعر المطلوب (صافي): *${formatCurrency(salePrice)}*\n`;
-      text += `• السعر الإجمالي (شامل 7.5% ضريبة وسعي): *${formatCurrency(Math.round(totalWithTaxAndFee))}*\n`;
-      if (area > 0) {
-        text += `• سعر المتر (صافي): ${formatCurrency(Math.round(pricePerMeterNet))}\n`;
-        text += `• سعر المتر (شامل): ${formatCurrency(Math.round(pricePerMeterTotal))}\n`;
-      }
-    } else {
-      text += `• السعر المطلوب: *على السوم*\n`;
-    }
-
     if (listing.bidPrice) {
-      text += `• السوم: ${formatCurrency(listing.bidPrice)}\n`;
+      text += `• السوم الإجمالي: ${formatCurrency(listing.bidPrice)}\n`;
     }
     if (listing.pricePerMeterLimit) {
       text += `• سعر المتر حد (صافي بدون ضريبة وسعي): ${formatCurrency(listing.pricePerMeterLimit)}\n`;
@@ -250,14 +233,8 @@ export const ListingCard: React.FC<ListingCardProps> = ({ listing, onShare, onDe
 
         {/* Pricing Dashboard */}
         <div className="grid grid-cols-2 gap-3 mb-6">
-          <div className="p-3 bg-slate-50 rounded-2xl border border-slate-100 group-hover:bg-blue-50/30 group-hover:border-blue-100 transition-all duration-300">
-            <span className="text-[10px] text-slate-400 block mb-1 font-black">السعر / الحد</span>
-            <span className="text-sm font-black text-blue-600">
-              {listing.salePrice ? formatCurrency(listing.salePrice) : 'غير محدد'}
-            </span>
-          </div>
           <div className="p-3 bg-slate-50 rounded-2xl border border-slate-100 group-hover:bg-slate-100 transition-all duration-300">
-            <span className="text-[10px] text-slate-400 block mb-1 font-black">آخر سوم</span>
+            <span className="text-[10px] text-slate-400 block mb-1 font-black">آخر سوم للإجمالي</span>
             <span className="text-sm font-black text-slate-700">
               {listing.bidPrice ? formatCurrency(listing.bidPrice) : 'لا يوجد'}
             </span>

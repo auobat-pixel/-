@@ -12,9 +12,6 @@ interface ShareCardProps {
 export const ShareCard: React.FC<ShareCardProps> = ({ listing, cardRef }) => {
   const salePrice = listing.salePrice || 0;
   const area = listing.area || 0;
-  const totalWithTaxAndFee = salePrice * 1.075;
-  const pricePerMeterNet = area > 0 ? salePrice / area : 0;
-  const pricePerMeterTotal = area > 0 ? totalWithTaxAndFee / area : 0;
 
   return (
     <div className="flex justify-center p-4 bg-slate-900 overflow-hidden">
@@ -91,28 +88,6 @@ export const ShareCard: React.FC<ShareCardProps> = ({ listing, cardRef }) => {
 
           {/* Pricing List (No Boxes, Clean text) */}
           <div className="flex flex-col gap-5 px-6">
-             
-             {/* Net Price */}
-             <div className="flex justify-between items-end border-b-[3px] border-slate-100 pb-3">
-                <span className="text-[2.6rem] font-bold text-slate-600">السعر الحد (صافي)</span>
-                <span className="text-[4.4rem] font-bold text-slate-800 digits-sans leading-none tracking-tight">
-                  {salePrice ? formatCurrency(salePrice) : 'على السـوم'}
-                </span>
-             </div>
-
-             {/* Total Price (Highlighted) */}
-             {salePrice > 0 && (
-               <div className="flex justify-between items-end border-b-[3px] border-slate-100 pb-3">
-                  <div>
-                    <span className="text-[2.6rem] font-bold text-blue-900 block border-b-2 border-transparent">السعر الإجمالي</span>
-                    <span className="text-[1.8rem] text-slate-500 font-medium block mt-1">شامل 7.5% ضريبة وسعي</span>
-                  </div>
-                  <span className="text-[4.8rem] font-bold text-blue-700 digits-sans leading-none tracking-tight">
-                    {formatCurrency(Math.round(totalWithTaxAndFee))}
-                  </span>
-               </div>
-             )}
-             
              {/* Per meter limits */}
              {listing.pricePerMeterLimit && (
                <div className="flex justify-between items-end border-b-[3px] border-slate-100 pb-3">
@@ -128,6 +103,16 @@ export const ShareCard: React.FC<ShareCardProps> = ({ listing, cardRef }) => {
                   <span className="text-[2.6rem] font-bold text-slate-600">سعر المتر سوم (بدون ضريبة وسعي)</span>
                   <span className="text-[3.8rem] font-bold text-emerald-700 digits-sans leading-none tracking-tight">
                     {formatCurrency(listing.pricePerMeterSaowm)}
+                  </span>
+               </div>
+             )}
+             
+             {/* Bid Price if available */}
+             {listing.bidPrice && (
+               <div className="flex justify-between items-end border-b-[3px] border-slate-100 pb-3">
+                  <span className="text-[2.6rem] font-bold text-slate-600">آخر سوم للموقع الإجمالي</span>
+                  <span className="text-[3.8rem] font-bold text-blue-700 digits-sans leading-none tracking-tight">
+                    {formatCurrency(listing.bidPrice)}
                   </span>
                </div>
              )}
