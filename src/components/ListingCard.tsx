@@ -31,7 +31,7 @@ export const ListingCard: React.FC<ListingCardProps> = ({ listing, onShare, onDe
     let text = `*✨ عرض عقاري | ${listing.type} ✨*\n\n`;
     text += `📍 *الموقع:* ${listing.location}\n`;
     if (listing.direction) text += `🧭 *الواجهة:* ${listing.direction}\n`;
-    if (area > 0) text += `📏 *المساحة:* ${area} م²\n`;
+    if (listing.area) text += `📏 *المساحة:* ${listing.area} م²\n`;
     
     text += `\n*📐 أطوال الأضلاع:*\n`;
     text += `• شمالاً: ${listing.dimNorth || '-'}\n`;
@@ -40,14 +40,11 @@ export const ListingCard: React.FC<ListingCardProps> = ({ listing, onShare, onDe
     text += `• غرباً: ${listing.dimWest || '-'}\n`;
 
     text += `\n*💰 تفاصيل السعر:*\n`;
-    if (listing.bidPrice) {
-      text += `• السوم الإجمالي: ${formatCurrency(listing.bidPrice)}\n`;
-    }
     if (listing.pricePerMeterLimit) {
-      text += `• سعر المتر حد (صافي بدون ضريبة وسعي): ${formatCurrency(listing.pricePerMeterLimit)}\n`;
+      text += `• سعر المتر حد: ${formatCurrency(listing.pricePerMeterLimit)}\n`;
     }
     if (listing.pricePerMeterSaowm) {
-      text += `• سعر المتر سوم (صافي بدون ضريبة وسعي): ${formatCurrency(listing.pricePerMeterSaowm)}\n`;
+      text += `• سعر المتر سوم: ${formatCurrency(listing.pricePerMeterSaowm)}\n`;
     }
 
     if (listing.notes) {
@@ -233,15 +230,9 @@ export const ListingCard: React.FC<ListingCardProps> = ({ listing, onShare, onDe
 
         {/* Pricing Dashboard */}
         <div className="grid grid-cols-2 gap-3 mb-6">
-          <div className="p-3 bg-slate-50 rounded-2xl border border-slate-100 group-hover:bg-slate-100 transition-all duration-300">
-            <span className="text-[10px] text-slate-400 block mb-1 font-black">آخر سوم للإجمالي</span>
-            <span className="text-sm font-black text-slate-700">
-              {listing.bidPrice ? formatCurrency(listing.bidPrice) : 'لا يوجد'}
-            </span>
-          </div>
           {listing.pricePerMeterLimit && (
             <div className="p-3 bg-slate-50 rounded-2xl border border-slate-100 group-hover:bg-emerald-50/30 group-hover:border-emerald-100 transition-all duration-300">
-              <span className="text-[10px] text-slate-400 block mb-1 font-black">سعر المتر (الحد صافي)</span>
+              <span className="text-[10px] text-slate-400 block mb-1 font-black">سعر المتر حد</span>
               <span className="text-sm font-black text-emerald-600">
                 {formatCurrency(listing.pricePerMeterLimit)}
               </span>
@@ -249,7 +240,7 @@ export const ListingCard: React.FC<ListingCardProps> = ({ listing, onShare, onDe
           )}
           {listing.pricePerMeterSaowm && (
             <div className="p-3 bg-slate-50 rounded-2xl border border-slate-100 group-hover:bg-emerald-50/30 group-hover:border-emerald-100 transition-all duration-300">
-              <span className="text-[10px] text-slate-400 block mb-1 font-black">سعر المتر (آخر سوم صافي)</span>
+              <span className="text-[10px] text-slate-400 block mb-1 font-black">سعر المتر سوم</span>
               <span className="text-sm font-black text-emerald-600">
                 {formatCurrency(listing.pricePerMeterSaowm)}
               </span>

@@ -18,7 +18,6 @@ export const WhatsAppBroadcastModal: React.FC<WhatsAppBroadcastModalProps> = ({ 
     msg += `تمت إضافة عرض عقاري جديد يهمك:\n\n`;
     msg += `*النوع:* ${listing.type}\n`;
     msg += `*الموقع:* ${listing.location}\n`;
-    if (listing.bidPrice) msg += `*السوم الإجمالي:* ${listing.bidPrice.toLocaleString()} ريال\n`;
     if (listing.pricePerMeterLimit) msg += `*سعر المتر حد:* ${listing.pricePerMeterLimit.toLocaleString()} ريال\n`;
     if (listing.pricePerMeterSaowm) msg += `*سعر المتر سوم:* ${listing.pricePerMeterSaowm.toLocaleString()} ريال\n`;
     if (listing.area) msg += `*المساحة:* ${listing.area} م²\n`;
