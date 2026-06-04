@@ -28,6 +28,7 @@ export interface RealEstateListing {
   notes?: string;
   area?: number;               // المساحة بالمتر المربع
   salePrice?: number; // سعر البيع أو الحد
+  bidPrice?: number; // سعر السوم الإجمالي
   pricePerMeterLimit?: number; // سعر المتر الحد
   pricePerMeterSaowm?: number; // سعر المتر السوم
   dimNorth?: string;

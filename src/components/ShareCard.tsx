@@ -88,6 +88,24 @@ export const ShareCard: React.FC<ShareCardProps> = ({ listing, cardRef }) => {
 
           {/* Pricing List (No Boxes, Clean text) */}
           <div className="flex flex-col gap-5 px-6">
+             {listing.salePrice && (
+               <div className="flex justify-between items-end border-b-[3px] border-slate-100 pb-3">
+                  <span className="text-[2.6rem] font-bold text-slate-600">السعر حد</span>
+                  <span className="text-[3.8rem] font-bold text-emerald-700 digits-sans leading-none tracking-tight">
+                    {formatCurrency(listing.salePrice)}
+                  </span>
+               </div>
+             )}
+             
+             {listing.bidPrice && (
+               <div className="flex justify-between items-end border-b-[3px] border-slate-100 pb-3">
+                  <span className="text-[2.6rem] font-bold text-slate-600">السعر سوم</span>
+                  <span className="text-[3.8rem] font-bold text-emerald-700 digits-sans leading-none tracking-tight">
+                    {formatCurrency(listing.bidPrice)}
+                  </span>
+               </div>
+             )}
+             
              {/* Per meter limits */}
              {listing.pricePerMeterLimit && (
                <div className="flex justify-between items-end border-b-[3px] border-slate-100 pb-3">

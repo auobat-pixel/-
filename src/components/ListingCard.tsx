@@ -40,6 +40,12 @@ export const ListingCard: React.FC<ListingCardProps> = ({ listing, onShare, onDe
     text += `• غرباً: ${listing.dimWest || '-'}\n`;
 
     text += `\n*💰 تفاصيل السعر:*\n`;
+    if (listing.salePrice) {
+      text += `• السعر حد: ${formatCurrency(listing.salePrice)}\n`;
+    }
+    if (listing.bidPrice) {
+      text += `• السعر سوم: ${formatCurrency(listing.bidPrice)}\n`;
+    }
     if (listing.pricePerMeterLimit) {
       text += `• سعر المتر حد: ${formatCurrency(listing.pricePerMeterLimit)}\n`;
     }
@@ -230,6 +236,22 @@ export const ListingCard: React.FC<ListingCardProps> = ({ listing, onShare, onDe
 
         {/* Pricing Dashboard */}
         <div className="grid grid-cols-2 gap-3 mb-6">
+          {listing.salePrice && (
+            <div className="p-3 bg-slate-50 rounded-2xl border border-slate-100 group-hover:bg-emerald-50/30 group-hover:border-emerald-100 transition-all duration-300">
+              <span className="text-[10px] text-slate-400 block mb-1 font-black">السعر حد</span>
+              <span className="text-sm font-black text-emerald-600">
+                {formatCurrency(listing.salePrice)}
+              </span>
+            </div>
+          )}
+          {listing.bidPrice && (
+            <div className="p-3 bg-slate-50 rounded-2xl border border-slate-100 group-hover:bg-emerald-50/30 group-hover:border-emerald-100 transition-all duration-300">
+              <span className="text-[10px] text-slate-400 block mb-1 font-black">السعر سوم</span>
+              <span className="text-sm font-black text-emerald-600">
+                {formatCurrency(listing.bidPrice)}
+              </span>
+            </div>
+          )}
           {listing.pricePerMeterLimit && (
             <div className="p-3 bg-slate-50 rounded-2xl border border-slate-100 group-hover:bg-emerald-50/30 group-hover:border-emerald-100 transition-all duration-300">
               <span className="text-[10px] text-slate-400 block mb-1 font-black">سعر المتر حد</span>

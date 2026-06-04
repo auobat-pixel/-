@@ -23,6 +23,7 @@ export const ListingForm: React.FC<ListingFormProps> = ({ onAdd, editingListing,
   const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
   const [imageUrl2, setImageUrl2] = useState<string | undefined>(undefined);
   const [salePrice, setSalePrice] = useState('');
+  const [bidPrice, setBidPrice] = useState('');
   const [pricePerMeterLimit, setPricePerMeterLimit] = useState('');
   const [pricePerMeterSaowm, setPricePerMeterSaowm] = useState('');
   const [area, setArea] = useState('');
@@ -73,6 +74,7 @@ export const ListingForm: React.FC<ListingFormProps> = ({ onAdd, editingListing,
       setImageUrl(editingListing.imageUrl);
       setImageUrl2(editingListing.imageUrl2);
       setSalePrice(editingListing.salePrice?.toString() || '');
+      setBidPrice(editingListing.bidPrice?.toString() || '');
       setPricePerMeterLimit(editingListing.pricePerMeterLimit?.toString() || '');
       setPricePerMeterSaowm(editingListing.pricePerMeterSaowm?.toString() || '');
       setArea(editingListing.area?.toString() || '');
@@ -96,6 +98,7 @@ export const ListingForm: React.FC<ListingFormProps> = ({ onAdd, editingListing,
     setImageUrl2(undefined);
     setArea('');
     setSalePrice('');
+    setBidPrice('');
     setPricePerMeterLimit('');
     setPricePerMeterSaowm('');
     setDirection('');
@@ -124,6 +127,7 @@ export const ListingForm: React.FC<ListingFormProps> = ({ onAdd, editingListing,
       imageUrl2,
       area: area ? Number(area) : undefined,
       salePrice: salePrice ? Number(salePrice) : undefined,
+      bidPrice: bidPrice ? Number(bidPrice) : undefined,
       pricePerMeterLimit: pricePerMeterLimit ? Number(pricePerMeterLimit) : undefined,
       pricePerMeterSaowm: pricePerMeterSaowm ? Number(pricePerMeterSaowm) : undefined,
       dimNorth: dimNorth || undefined,
@@ -403,6 +407,35 @@ export const ListingForm: React.FC<ListingFormProps> = ({ onAdd, editingListing,
               onChange={(e) => setArea(e.target.value)}
               className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
             />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">السعر (حد)</label>
+            <div className="relative">
+              <Tag className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+              <input
+                type="number"
+                placeholder="اختياري"
+                value={salePrice}
+                onChange={(e) => setSalePrice(e.target.value)}
+                className="w-full pr-10 pl-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+              />
+            </div>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">السعر (سوم)</label>
+            <div className="relative">
+              <Gavel className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+              <input
+                type="number"
+                placeholder="اختياري"
+                value={bidPrice}
+                onChange={(e) => setBidPrice(e.target.value)}
+                className="w-full pr-10 pl-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+              />
+            </div>
           </div>
         </div>
 
