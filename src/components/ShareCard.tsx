@@ -94,7 +94,7 @@ export const ShareCard: React.FC<ShareCardProps> = ({ listing, cardRef }) => {
              
              {/* Net Price */}
              <div className="flex justify-between items-end border-b-[3px] border-slate-100 pb-3">
-                <span className="text-[2.6rem] font-bold text-slate-600">السعر المطلوب (صافي)</span>
+                <span className="text-[2.6rem] font-bold text-slate-600">السعر الحد (صافي)</span>
                 <span className="text-[4.4rem] font-bold text-slate-800 digits-sans leading-none tracking-tight">
                   {salePrice ? formatCurrency(salePrice) : 'على السـوم'}
                 </span>
@@ -102,13 +102,32 @@ export const ShareCard: React.FC<ShareCardProps> = ({ listing, cardRef }) => {
 
              {/* Total Price (Highlighted) */}
              {salePrice > 0 && (
-               <div className="flex justify-between items-end border-b-[3px] border-slate-100 pb-3 border-b-transparent">
+               <div className="flex justify-between items-end border-b-[3px] border-slate-100 pb-3">
                   <div>
                     <span className="text-[2.6rem] font-bold text-blue-900 block border-b-2 border-transparent">السعر الإجمالي</span>
-                    <span className="text-[1.8rem] text-slate-500 font-medium block mt-1">شامل 7.5% ضريبة القيمة المضافة والسعي</span>
+                    <span className="text-[1.8rem] text-slate-500 font-medium block mt-1">شامل 7.5% ضريبة وسعي</span>
                   </div>
                   <span className="text-[4.8rem] font-bold text-blue-700 digits-sans leading-none tracking-tight">
                     {formatCurrency(Math.round(totalWithTaxAndFee))}
+                  </span>
+               </div>
+             )}
+             
+             {/* Per meter limits */}
+             {listing.pricePerMeterLimit && (
+               <div className="flex justify-between items-end border-b-[3px] border-slate-100 pb-3">
+                  <span className="text-[2.6rem] font-bold text-slate-600">سعر المتر حد (بدون ضريبة وسعي)</span>
+                  <span className="text-[3.8rem] font-bold text-emerald-700 digits-sans leading-none tracking-tight">
+                    {formatCurrency(listing.pricePerMeterLimit)}
+                  </span>
+               </div>
+             )}
+             
+             {listing.pricePerMeterSaowm && (
+               <div className="flex justify-between items-end border-b-[3px] border-slate-100 pb-3">
+                  <span className="text-[2.6rem] font-bold text-slate-600">سعر المتر سوم (بدون ضريبة وسعي)</span>
+                  <span className="text-[3.8rem] font-bold text-emerald-700 digits-sans leading-none tracking-tight">
+                    {formatCurrency(listing.pricePerMeterSaowm)}
                   </span>
                </div>
              )}

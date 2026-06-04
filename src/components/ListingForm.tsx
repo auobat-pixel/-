@@ -24,6 +24,8 @@ export const ListingForm: React.FC<ListingFormProps> = ({ onAdd, editingListing,
   const [imageUrl2, setImageUrl2] = useState<string | undefined>(undefined);
   const [salePrice, setSalePrice] = useState('');
   const [bidPrice, setBidPrice] = useState('');
+  const [pricePerMeterSaowm, setPricePerMeterSaowm] = useState('');
+  const [pricePerMeterLimit, setPricePerMeterLimit] = useState('');
   const [area, setArea] = useState('');
   const [dimNorth, setDimNorth] = useState('');
   const [dimSouth, setDimSouth] = useState('');
@@ -73,6 +75,8 @@ export const ListingForm: React.FC<ListingFormProps> = ({ onAdd, editingListing,
       setImageUrl2(editingListing.imageUrl2);
       setSalePrice(editingListing.salePrice?.toString() || '');
       setBidPrice(editingListing.bidPrice?.toString() || '');
+      setPricePerMeterSaowm(editingListing.pricePerMeterSaowm?.toString() || '');
+      setPricePerMeterLimit(editingListing.pricePerMeterLimit?.toString() || '');
       setArea(editingListing.area?.toString() || '');
       setDimNorth(editingListing.dimNorth || '');
       setDimSouth(editingListing.dimSouth || '');
@@ -122,6 +126,8 @@ export const ListingForm: React.FC<ListingFormProps> = ({ onAdd, editingListing,
       area: area ? Number(area) : undefined,
       salePrice: salePrice ? Number(salePrice) : undefined,
       bidPrice: bidPrice ? Number(bidPrice) : undefined,
+      pricePerMeterSaowm: pricePerMeterSaowm ? Number(pricePerMeterSaowm) : undefined,
+      pricePerMeterLimit: pricePerMeterLimit ? Number(pricePerMeterLimit) : undefined,
       dimNorth: dimNorth || undefined,
       dimSouth: dimSouth || undefined,
       dimEast: dimEast || undefined,
@@ -425,6 +431,35 @@ export const ListingForm: React.FC<ListingFormProps> = ({ onAdd, editingListing,
                 placeholder="اختياري"
                 value={bidPrice}
                 onChange={(e) => setBidPrice(e.target.value)}
+                className="w-full pr-10 pl-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">سعر المتر حد (بدون ضريبة وسعي)</label>
+            <div className="relative">
+              <Tag className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+              <input
+                type="number"
+                placeholder="اختياري"
+                value={pricePerMeterLimit}
+                onChange={(e) => setPricePerMeterLimit(e.target.value)}
+                className="w-full pr-10 pl-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+              />
+            </div>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">سعر المتر سوم (بدون ضريبة وسعي)</label>
+            <div className="relative">
+              <Gavel className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+              <input
+                type="number"
+                placeholder="اختياري"
+                value={pricePerMeterSaowm}
+                onChange={(e) => setPricePerMeterSaowm(e.target.value)}
                 className="w-full pr-10 pl-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
               />
             </div>

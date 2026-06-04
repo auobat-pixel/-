@@ -60,6 +60,12 @@ export const ListingCard: React.FC<ListingCardProps> = ({ listing, onShare, onDe
     if (listing.bidPrice) {
       text += `• السوم: ${formatCurrency(listing.bidPrice)}\n`;
     }
+    if (listing.pricePerMeterLimit) {
+      text += `• سعر المتر حد (صافي بدون ضريبة وسعي): ${formatCurrency(listing.pricePerMeterLimit)}\n`;
+    }
+    if (listing.pricePerMeterSaowm) {
+      text += `• سعر المتر سوم (صافي بدون ضريبة وسعي): ${formatCurrency(listing.pricePerMeterSaowm)}\n`;
+    }
 
     if (listing.notes) {
       text += `\n*📝 ملاحظات:*\n${listing.notes}\n`;
@@ -190,6 +196,7 @@ export const ListingCard: React.FC<ListingCardProps> = ({ listing, onShare, onDe
           <AnimatePresence>
             {isQuickViewOpen && (
               <motion.div
+                key="quick-view"
                 initial={{ height: 0, opacity: 0 }}
                 animate={{ height: 'auto', opacity: 1 }}
                 exit={{ height: 0, opacity: 0 }}
@@ -255,6 +262,22 @@ export const ListingCard: React.FC<ListingCardProps> = ({ listing, onShare, onDe
               {listing.bidPrice ? formatCurrency(listing.bidPrice) : 'لا يوجد'}
             </span>
           </div>
+          {listing.pricePerMeterLimit && (
+            <div className="p-3 bg-slate-50 rounded-2xl border border-slate-100 group-hover:bg-emerald-50/30 group-hover:border-emerald-100 transition-all duration-300">
+              <span className="text-[10px] text-slate-400 block mb-1 font-black">سعر المتر (الحد صافي)</span>
+              <span className="text-sm font-black text-emerald-600">
+                {formatCurrency(listing.pricePerMeterLimit)}
+              </span>
+            </div>
+          )}
+          {listing.pricePerMeterSaowm && (
+            <div className="p-3 bg-slate-50 rounded-2xl border border-slate-100 group-hover:bg-emerald-50/30 group-hover:border-emerald-100 transition-all duration-300">
+              <span className="text-[10px] text-slate-400 block mb-1 font-black">سعر المتر (آخر سوم صافي)</span>
+              <span className="text-sm font-black text-emerald-600">
+                {formatCurrency(listing.pricePerMeterSaowm)}
+              </span>
+            </div>
+          )}
         </div>
 
         {/* Action Buttons */}
