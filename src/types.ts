@@ -19,23 +19,23 @@ export interface RealEstateListing {
   id: string;
   location: string;
   type: string;
-  direction?: string;
-  googleMapsUrl?: string;
-  imageUrl?: string;
-  imageUrl2?: string;
-  contactPhone?: string;
-  marketerName?: string;
-  notes?: string;
-  area?: number;               // المساحة بالمتر المربع
-  salePrice?: number; // سعر البيع أو الحد
-  bidPrice?: number; // سعر السوم الإجمالي
-  pricePerMeterLimit?: number; // سعر المتر الحد
-  pricePerMeterSaowm?: number; // سعر المتر السوم
-  dimNorth?: string;
-  dimSouth?: string;
-  dimEast?: string;
-  dimWest?: string;
-  source?: string;
+  direction?: string | null;
+  googleMapsUrl?: string | null;
+  imageUrl?: string | null;
+  imageUrl2?: string | null;
+  contactPhone?: string | null;
+  marketerName?: string | null;
+  notes?: string | null;
+  area?: number | null;               // المساحة بالمتر المربع
+  salePrice?: number | null; // سعر البيع أو الحد
+  bidPrice?: number | null; // سعر السوم الإجمالي
+  pricePerMeterLimit?: number | null; // سعر المتر الحد
+  pricePerMeterSaowm?: number | null; // سعر المتر السوم
+  dimNorth?: string | null;
+  dimSouth?: string | null;
+  dimEast?: string | null;
+  dimWest?: string | null;
+  source?: string | null;
   date: string;
   createdBy?: string; // ID of the user who created it
   favoritedBy?: string[]; // Array of user IDs who favorited this listing
