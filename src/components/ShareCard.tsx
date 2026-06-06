@@ -139,23 +139,31 @@ export const ShareCard: React.FC<ShareCardProps> = ({ listing, cardRef }) => {
                     <span className="text-[2rem] text-slate-400 font-bold">أطوال الأضلاع</span>
                     <div className="h-[2px] bg-slate-100 flex-1" />
                   </div>
-                  <div className="grid grid-cols-4 gap-4 text-center">
-                     <div className="bg-white border-[2px] border-slate-200/60 py-2 px-2 rounded-3xl shadow-sm">
-                       <span className="text-slate-400 text-[1.6rem] font-bold mb-1 block">شمالاً</span>
-                       <span className="text-slate-800 text-[2.4rem] font-bold digits-sans block">{listing.dimNorth || '-'}</span>
-                     </div>
-                     <div className="bg-white border-[2px] border-slate-200/60 py-2 px-2 rounded-3xl shadow-sm">
-                       <span className="text-slate-400 text-[1.6rem] font-bold mb-1 block">جنوباً</span>
-                       <span className="text-slate-800 text-[2.4rem] font-bold digits-sans block">{listing.dimSouth || '-'}</span>
-                     </div>
-                     <div className="bg-white border-[2px] border-slate-200/60 py-2 px-2 rounded-3xl shadow-sm">
-                       <span className="text-slate-400 text-[1.6rem] font-bold mb-1 block">شرقاً</span>
-                       <span className="text-slate-800 text-[2.4rem] font-bold digits-sans block">{listing.dimEast || '-'}</span>
-                     </div>
-                     <div className="bg-white border-[2px] border-slate-200/60 py-2 px-2 rounded-3xl shadow-sm">
-                       <span className="text-slate-400 text-[1.6rem] font-bold mb-1 block">غرباً</span>
-                       <span className="text-slate-800 text-[2.4rem] font-bold digits-sans block">{listing.dimWest || '-'}</span>
-                     </div>
+                  <div className="flex flex-wrap justify-center gap-4 text-center">
+                     {listing.dimNorth && (
+                       <div className="bg-white border-[2px] border-slate-200/60 py-2 px-6 rounded-3xl shadow-sm flex-1 min-w-[120px] max-w-[200px]">
+                         <span className="text-slate-400 text-[1.6rem] font-bold mb-1 block">شمالاً</span>
+                         <span className="text-slate-800 text-[2.4rem] font-bold digits-sans block">{listing.dimNorth}</span>
+                       </div>
+                     )}
+                     {listing.dimSouth && (
+                       <div className="bg-white border-[2px] border-slate-200/60 py-2 px-6 rounded-3xl shadow-sm flex-1 min-w-[120px] max-w-[200px]">
+                         <span className="text-slate-400 text-[1.6rem] font-bold mb-1 block">جنوباً</span>
+                         <span className="text-slate-800 text-[2.4rem] font-bold digits-sans block">{listing.dimSouth}</span>
+                       </div>
+                     )}
+                     {listing.dimEast && (
+                       <div className="bg-white border-[2px] border-slate-200/60 py-2 px-6 rounded-3xl shadow-sm flex-1 min-w-[120px] max-w-[200px]">
+                         <span className="text-slate-400 text-[1.6rem] font-bold mb-1 block">شرقاً</span>
+                         <span className="text-slate-800 text-[2.4rem] font-bold digits-sans block">{listing.dimEast}</span>
+                       </div>
+                     )}
+                     {listing.dimWest && (
+                       <div className="bg-white border-[2px] border-slate-200/60 py-2 px-6 rounded-3xl shadow-sm flex-1 min-w-[120px] max-w-[200px]">
+                         <span className="text-slate-400 text-[1.6rem] font-bold mb-1 block">غرباً</span>
+                         <span className="text-slate-800 text-[2.4rem] font-bold digits-sans block">{listing.dimWest}</span>
+                       </div>
+                     )}
                   </div>
               </div>
             )}
@@ -177,9 +185,9 @@ export const ShareCard: React.FC<ShareCardProps> = ({ listing, cardRef }) => {
         <div className="absolute bottom-0 left-0 w-full bg-slate-900 border-t-[6px] border-slate-800 text-white flex items-center justify-between px-16 h-[220px] z-20 shadow-[0_-10px_40px_rgba(0,0,0,0.1)]">
           
           {/* QR Code */}
-          <div className="flex items-center gap-6">
-             <div className="p-3 bg-white rounded-[1.2rem] shadow-xl">
-               {listing.googleMapsUrl ? (
+          {listing.googleMapsUrl ? (
+            <div className="flex items-center gap-6">
+               <div className="p-3 bg-white rounded-[1.2rem] shadow-xl">
                  <QRCodeCanvas 
                    value={listing.googleMapsUrl} 
                    size={130}
@@ -187,27 +195,34 @@ export const ShareCard: React.FC<ShareCardProps> = ({ listing, cardRef }) => {
                    includeMargin={false}
                    fgColor="#0f172a"
                  />
-               ) : (
-                  <div className="w-[130px] h-[130px] bg-slate-50 flex items-center justify-center text-slate-300 rounded-[1rem]">
-                    <MapPin size={40} />
-                  </div>
-               )}
-             </div>
-             <div className="flex flex-col">
-                <span className="text-[2.4rem] font-bold mb-1">للوصول للموقع</span>
-                <span className="text-[1.8rem] text-slate-400 font-medium tracking-wide">امسح الرمز بكاميرا الجوال</span>
-             </div>
-          </div>
+               </div>
+               <div className="flex flex-col">
+                  <span className="text-[2.4rem] font-bold mb-1">للوصول للموقع</span>
+                  <span className="text-[1.8rem] text-slate-400 font-medium tracking-wide">امسح الرمز بكاميرا الجوال</span>
+               </div>
+            </div>
+          ) : <div />}
 
           {/* Contact */}
-          <div className="flex flex-col items-end">
-             <span className="text-[2.2rem] text-slate-400 font-bold mb-1 tracking-wide">
-               {listing.marketerName ? `للتواصل مع المسوق: ${listing.marketerName}` : 'للتواصل مع المسوق'}
-             </span>
-             <span className="text-[4.2rem] font-bold text-white tracking-widest digits-sans leading-none mt-2" dir="ltr">
-               {listing.contactPhone || '-'}
-             </span>
-          </div>
+          {(listing.marketerName || listing.contactPhone) && (
+            <div className="flex flex-col items-end">
+               {listing.marketerName && (
+                 <span className="text-[2.2rem] text-slate-400 font-bold mb-1 tracking-wide">
+                   {`للتواصل مع المسوق: ${listing.marketerName}`}
+                 </span>
+               )}
+               {!listing.marketerName && listing.contactPhone && (
+                 <span className="text-[2.2rem] text-slate-400 font-bold mb-1 tracking-wide">
+                   للتواصل مع المسوق
+                 </span>
+               )}
+               {listing.contactPhone && (
+                 <span className="text-[4.2rem] font-bold text-white tracking-widest digits-sans leading-none mt-2" dir="ltr">
+                   {listing.contactPhone}
+                 </span>
+               )}
+            </div>
+          )}
 
         </div>
         
