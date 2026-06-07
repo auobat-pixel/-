@@ -210,20 +210,30 @@ export default function App() {
                     reg.showNotification(notification.title, {
                       body: notification.message,
                       icon: '/logo.png',
+                      badge: '/logo.png',
+                      tag: notification.title,
                       // @ts-ignore
-                      vibrate: [200, 100, 200]
+                      renotify: true,
+                      requireInteraction: true,
+                      vibrate: [200, 100, 200, 100, 200, 100, 200]
                     });
                   } else {
                     new Notification(notification.title, {
                       body: notification.message,
-                      icon: '/logo.png'
+                      icon: '/logo.png',
+                      badge: '/logo.png',
+                      tag: notification.title,
+                      requireInteraction: true
                     });
                   }
                 });
               } catch (e) {
                 new Notification(notification.title, {
                   body: notification.message,
-                  icon: '/logo.png'
+                  icon: '/logo.png',
+                  badge: '/logo.png',
+                  tag: notification.title,
+                  requireInteraction: true
                 });
               }
             }
@@ -625,6 +635,16 @@ export default function App() {
           </div>
           
           <div className="flex items-center gap-2 md:gap-3">
+            <button
+              onClick={() => setShowAlerts(true)}
+              className="relative p-2 text-slate-600 hover:bg-slate-100 rounded-xl transition-colors"
+            >
+              <Bell size={20} />
+              {alerts.some(a => !a.isRead) && (
+                <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 border-2 border-[#F6F6F0] rounded-full"></span>
+              )}
+            </button>
+
             <div className="relative management-dropdown-container">
               <button 
                 onClick={() => setShowManagementDropdown(!showManagementDropdown)}
@@ -638,9 +658,6 @@ export default function App() {
                 <Menu size={16} />
                 <span className="hidden md:inline">القائمة الإدارية</span>
                 <ChevronDown size={12} className={cn("transition-transform duration-300", showManagementDropdown && "rotate-180")} />
-                {alerts.some(a => !a.isRead) && (
-                  <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 border-2 border-white rounded-full"></span>
-                )}
               </button>
 
               <AnimatePresence>
@@ -658,17 +675,6 @@ export default function App() {
                     >
                       <Calendar size={18} />
                       <span>التقويم</span>
-                    </button>
-
-                    <button 
-                      onClick={() => { setShowAlerts(true); setShowManagementDropdown(false); }}
-                      className="w-full flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-amber-50 hover:text-amber-600 transition-colors text-right font-bold relative"
-                    >
-                      <Bell size={18} />
-                      <span>التنبيهات</span>
-                      {alerts.some(a => !a.isRead) && (
-                        <span className="w-2 h-2 bg-red-50 rounded-full mr-auto"></span>
-                      )}
                     </button>
 
                     <button 
