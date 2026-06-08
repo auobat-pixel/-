@@ -71,9 +71,23 @@ service cloud.firestore {
              data.createdAt is string;
     }
 
+    // Validation for Request
+    function isValidRequest(data) {
+      return data.keys().hasAll(['type', 'date', 'createdBy']) &&
+             data.type is string && data.type.size() > 0 &&
+             data.date is string &&
+             data.createdBy is string;
+    }
+
     match /users/{userId} {
       allow read: if true; 
       allow create, update: if isValidUser(incoming());
+      allow delete: if true;
+    }
+
+    match /requests/{requestId} {
+      allow read: if true;
+      allow create, update: if isValidRequest(incoming());
       allow delete: if true;
     }
 

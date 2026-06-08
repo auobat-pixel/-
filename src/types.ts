@@ -41,6 +41,15 @@ export interface RealEstateListing {
   favoritedBy?: string[]; // Array of user IDs who favorited this listing
 }
 
+export interface RealEstateRequest {
+  id: string;
+  type: string;
+  source?: string | null;
+  notes?: string | null;
+  date: string;
+  createdBy?: string;
+}
+
 export interface Notification {
   id: string;
   title: string;

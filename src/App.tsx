@@ -4,11 +4,14 @@
  */
 
 import React, { useState, useRef, useEffect } from 'react';
-import { RealEstateListing, User, Appointment, Alert } from './types';
+import { RealEstateListing, RealEstateRequest, User, Appointment, Alert } from './types';
+// Import UI components
 import { ListingForm } from './components/ListingForm.tsx';
 import { ListingCard } from './components/ListingCard.tsx';
 import { ShareCard } from './components/ShareCard.tsx';
 import { Login } from './components/Login.tsx';
+import { RequestForm } from './components/RequestForm.tsx';
+import { RequestCard } from './components/RequestCard.tsx';
 import { WhatsAppBroadcastModal } from './components/WhatsAppBroadcastModal.tsx';
 import { UserManagement } from './components/UserManagement.tsx';
 import { AppointmentModal } from './components/AppointmentModal.tsx';
@@ -66,6 +69,8 @@ export default function App() {
   });
 
   const [listings, setListings] = useState<RealEstateListing[]>([]);
+  const [requests, setRequests] = useState<RealEstateRequest[]>([]);
+  const [activeTab, setActiveTab] = useState<'listings' | 'requests'>('listings');
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState<string>('all');
   const [filterFavorites, setFilterFavorites] = useState(false);
@@ -75,12 +80,15 @@ export default function App() {
   const [showChangePassword, setShowChangePassword] = useState(false);
   const [showCustomNotificationModal, setShowCustomNotificationModal] = useState(false);
   const [showAddListingModal, setShowAddListingModal] = useState(false);
+  const [showAddRequestModal, setShowAddRequestModal] = useState(false);
   const [schedulingListing, setSchedulingListing] = useState<RealEstateListing | null>(null);
   const [editingListing, setEditingListing] = useState<RealEstateListing | null>(null);
+  const [editingRequest, setEditingRequest] = useState<RealEstateRequest | null>(null);
   const [sharingListing, setSharingListing] = useState<RealEstateListing | null>(null);
   const [commentsListing, setCommentsListing] = useState<RealEstateListing | null>(null);
   const [showWhatsAppBroadcast, setShowWhatsAppBroadcast] = useState<RealEstateListing | null>(null);
   const [listingToDeleteId, setListingToDeleteId] = useState<string | null>(null);
+  const [requestToDeleteId, setRequestToDeleteId] = useState<string | null>(null);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [alerts, setAlerts] = useState<Alert[]>([]);
 
@@ -162,6 +170,16 @@ export default function App() {
       const listingsData = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id } as RealEstateListing));
       setListings(listingsData);
     }, (error) => handleFirestoreError(error, OperationType.GET, 'listings'));
+    return () => unsub();
+  }, []);
+
+  // Sync Requests
+  useEffect(() => {
+    const q = query(collection(db, 'requests'), orderBy('date', 'desc'));
+    const unsub = onSnapshot(q, (snapshot) => {
+      const requestsData = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id } as RealEstateRequest));
+      setRequests(requestsData);
+    }, (error) => handleFirestoreError(error, OperationType.GET, 'requests'));
     return () => unsub();
   }, []);
 
@@ -460,6 +478,60 @@ export default function App() {
     }
   };
  
+  const addRequest = async (data: Omit<RealEstateRequest, 'id' | 'date' | 'createdBy'>) => {
+    try {
+      const requestData = {
+        ...data,
+        date: new Date().toISOString(),
+        createdBy: currentUser?.id
+      };
+      await addDoc(collection(db, 'requests'), cleanData(requestData));
+      
+      setShowAddRequestModal(false);
+      toast.success('تمت إضافة الطلب بنجاح');
+    } catch (error) {
+      handleFirestoreError(error, OperationType.CREATE, 'requests');
+    }
+  };
+
+  const updateRequest = async (id: string, data: Omit<RealEstateRequest, 'id' | 'date'>) => {
+    try {
+      const request = requests.find(r => r.id === id);
+      if (!request) return;
+
+      if (request.createdBy !== currentUser?.id && currentUser?.role !== 'admin') {
+        toast.error('لا يمكنك تعديل هذا الطلب - التعديل متاح فقط لمن أضافه');
+        return;
+      }
+
+      await updateDoc(doc(db, 'requests', id), cleanData({ ...data }));
+      setEditingRequest(null);
+      toast.success('تم تحديث بيانات الطلب');
+    } catch (error) {
+      handleFirestoreError(error, OperationType.UPDATE, `requests/${id}`);
+    }
+  };
+
+  const deleteRequest = async (id: string) => {
+    if (currentUser?.role === 'viewer') return;
+    
+    try {
+      const request = requests.find(r => r.id === id);
+      if (!request) return;
+
+      if (request.createdBy !== currentUser?.id && currentUser?.role !== 'admin') {
+        toast.error('ليس لديك صلاحية لحذف هذا الطلب');
+        return;
+      }
+
+      await deleteDoc(doc(db, 'requests', id));
+      setRequestToDeleteId(null);
+      toast.success('تم حذف الطلب');
+    } catch (error) {
+      handleFirestoreError(error, OperationType.DELETE, `requests/${id}`);
+    }
+  };
+
   const addListing = async (data: Omit<RealEstateListing, 'id' | 'date' | 'createdBy'>) => {
     try {
       const listingData = {
@@ -540,6 +612,16 @@ export default function App() {
     const matchesFavorites = filterFavorites ? listing.favoritedBy?.includes(currentUser?.id || '') : true;
 
     return matchesSearch && matchesFilter && matchesFavorites;
+  });
+
+  const filteredRequests = requests.filter(request => {
+    const matchesSearch = request.type.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                         (request.notes?.toLowerCase().includes(searchQuery.toLowerCase())) ||
+                         (request.source?.toLowerCase().includes(searchQuery.toLowerCase()));
+    
+    const matchesFilter = filterType === 'all' || request.type.toLowerCase() === filterType.toLowerCase();
+
+    return matchesSearch && matchesFilter;
   });
 
   const stats = {
@@ -793,19 +875,47 @@ export default function App() {
           </motion.div>
         </div>
 
+        <div className="flex bg-slate-100 p-1.5 rounded-2xl mb-8 w-full max-w-md mx-auto relative z-10">
+          <button
+            onClick={() => setActiveTab('listings')}
+            className={`flex-1 px-8 py-3.5 rounded-xl font-bold text-base transition-all ${activeTab === 'listings' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+          >
+            العروض
+          </button>
+          <button
+            onClick={() => setActiveTab('requests')}
+            className={`flex-1 px-8 py-3.5 rounded-xl font-bold text-base transition-all ${activeTab === 'requests' ? 'bg-white text-teal-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+          >
+            الطلبات
+          </button>
+        </div>
+
         <div className="grid gap-10 items-start lg:grid-cols-[350px_1fr]">
           <aside className="lg:sticky lg:top-24 space-y-6">
             {currentUser.role !== 'viewer' ? (
-               <button 
-                 onClick={() => setShowAddListingModal(true)}
-                 className="w-full bg-blue-600 hover:bg-blue-700 text-white p-8 rounded-[2.5rem] shadow-xl shadow-blue-100 flex flex-col items-center justify-center gap-4 transition-all hover:-translate-y-1"
-               >
-                 <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center text-white mb-2">
-                   <Plus size={32} />
-                 </div>
-                 <h2 className="text-2xl font-black">إضافة عرض عقاري جديد</h2>
-                 <p className="text-blue-100 text-center font-medium">قم بإضافة وتفصيل معلومات العرض العقاري لإنشاء بطاقة تسويقية ذكية ومميزة</p>
-               </button>
+              activeTab === 'listings' ? (
+                <button 
+                  onClick={() => setShowAddListingModal(true)}
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white p-8 rounded-[2.5rem] shadow-xl shadow-blue-100 flex flex-col items-center justify-center gap-4 transition-all hover:-translate-y-1"
+                >
+                  <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center text-white mb-2">
+                    <Plus size={32} />
+                  </div>
+                  <h2 className="text-2xl font-black">إضافة عرض عقاري جديد</h2>
+                  <p className="text-blue-100 text-center font-medium">قم بإضافة وتفصيل معلومات العرض العقاري لإنشاء بطاقة تسويقية ذكية ومميزة</p>
+                </button>
+              ) : (
+                <button 
+                  onClick={() => setShowAddRequestModal(true)}
+                  className="w-full bg-teal-600 hover:bg-teal-700 text-white p-8 rounded-[2.5rem] shadow-xl shadow-teal-100 flex flex-col items-center justify-center gap-4 transition-all hover:-translate-y-1"
+                >
+                  <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center text-white mb-2">
+                    <Plus size={32} />
+                  </div>
+                  <h2 className="text-2xl font-black">إضافة طلب عقاري جديد</h2>
+                  <p className="text-teal-100 text-center font-medium">قم بإضافة طلبات العملاء العقارية لمتابعتها والعثور على المناسب</p>
+                </button>
+              )
             ) : (
               <div className="p-8 bg-white rounded-[2.5rem] border border-slate-100 shadow-sm text-center">
                 <div className="w-16 h-16 bg-slate-50 text-slate-300 rounded-2xl flex items-center justify-center mx-auto mb-4">
@@ -865,35 +975,58 @@ export default function App() {
                </div>
             </div>
 
-            {filteredListings.length === 0 ? (
-              <div className="bg-white border-4 border-dashed border-slate-100 rounded-[3rem] p-20 text-center shadow-sm">
-                <div className="w-24 h-24 bg-slate-50 rounded-3xl flex items-center justify-center text-slate-200 mx-auto mb-6">
-                  <LayoutGrid size={48} />
+            {activeTab === 'listings' ? (
+              filteredListings.length === 0 ? (
+                <div className="bg-white border-4 border-dashed border-slate-100 rounded-[3rem] p-20 text-center shadow-sm">
+                  <div className="w-24 h-24 bg-slate-50 rounded-3xl flex items-center justify-center text-slate-200 mx-auto mb-6">
+                    <LayoutGrid size={48} />
+                  </div>
+                  <h3 className="text-2xl font-black text-slate-700 mb-2">لا تـوجد نـتائج بنـاءً على بحـثك</h3>
+                  <p className="text-slate-400 font-medium">ابدأ بإضافة عقارات جديدة أو جرب كلمات بحث أخرى</p>
                 </div>
-                <h3 className="text-2xl font-black text-slate-700 mb-2">لا تـوجد نـتائج بنـاءً على بحـثك</h3>
-                <p className="text-slate-400 font-medium">ابدأ بإضافة عقارات جديدة أو جرب كلمات بحث أخرى</p>
-              </div>
+              ) : (
+                <div className="grid sm:grid-cols-2 gap-6">
+                  <AnimatePresence mode="popLayout">
+                    {filteredListings.map((listing) => (
+                      <ListingCard 
+                        key={listing.id} 
+                        listing={listing} 
+                        onShare={setSharingListing}
+                        onDelete={setListingToDeleteId}
+                        onEdit={setEditingListing}
+                        onScheduleViewing={setSchedulingListing}
+                        onViewComments={setCommentsListing}
+                        onToggleFavorite={toggleFavorite}
+                        currentUserId={currentUser.id}
+                        isAdmin={currentUser.role === 'admin'}
+                        canEdit={listing.createdBy === currentUser.id}
+                        canDelete={currentUser.role !== 'viewer' && (currentUser.role === 'admin' || listing.createdBy === currentUser.id)}
+                      />
+                    ))}
+                  </AnimatePresence>
+                </div>
+              )
             ) : (
-              <div className="grid sm:grid-cols-2 gap-6">
-                <AnimatePresence mode="popLayout">
-                  {filteredListings.map((listing) => (
-                    <ListingCard 
-                      key={listing.id} 
-                      listing={listing} 
-                      onShare={setSharingListing}
-                      onDelete={setListingToDeleteId}
-                      onEdit={setEditingListing}
-                      onScheduleViewing={setSchedulingListing}
-                      onViewComments={setCommentsListing}
-                      onToggleFavorite={toggleFavorite}
-                      currentUserId={currentUser.id}
-                      isAdmin={currentUser.role === 'admin'}
-                      canEdit={listing.createdBy === currentUser.id}
-                      canDelete={currentUser.role !== 'viewer' && (currentUser.role === 'admin' || listing.createdBy === currentUser.id)}
-                    />
-                  ))}
-                </AnimatePresence>
-              </div>
+              filteredRequests.length === 0 ? (
+                <div className="bg-white border-4 border-dashed border-slate-100 rounded-[3rem] p-20 text-center shadow-sm">
+                  <h3 className="text-2xl font-black text-slate-700 mb-2">لا تـوجد طلبات مسجلة</h3>
+                  <p className="text-slate-400 font-medium">ابدأ بإضافة طلبات جديدة للعملاء</p>
+                </div>
+              ) : (
+                <div className="grid sm:grid-cols-2 gap-6">
+                  <AnimatePresence mode="popLayout">
+                    {filteredRequests.map((request) => (
+                      <RequestCard 
+                        key={request.id} 
+                        request={request}
+                        onEdit={setEditingRequest}
+                        onDelete={setRequestToDeleteId}
+                        canEdit={currentUser.role === 'admin' || request.createdBy === currentUser.id}
+                      />
+                    ))}
+                  </AnimatePresence>
+                </div>
+              )
             )}
           </section>
         </div>
@@ -1024,6 +1157,39 @@ export default function App() {
               </div>
             </motion.div>
           </div>
+        )}
+
+        <ConfirmationModal
+          key="modal-confirmation-request"
+          isOpen={!!requestToDeleteId || (requestToDeleteId === 'all')}
+          title="حذف الطلب"
+          message="هل أنت متأكد من رغبتك في حذف هذا الطلب؟ لا يمكن التراجع عن هذا الإجراء."
+          confirmLabel="نعم، احذف الطلب"
+          cancelLabel="إلغاء"
+          onConfirm={() => {
+            if (requestToDeleteId) {
+              deleteRequest(requestToDeleteId);
+            }
+          }}
+          onCancel={() => setRequestToDeleteId(null)}
+        />
+
+        {(showAddRequestModal || editingRequest) && (
+          <RequestForm
+            key="modal-request-form"
+            initialData={editingRequest}
+            onSubmit={(data) => {
+              if (editingRequest) {
+                updateRequest(editingRequest.id, data);
+              } else {
+                addRequest(data);
+              }
+            }}
+            onClose={() => {
+              setShowAddRequestModal(false);
+              setEditingRequest(null);
+            }}
+          />
         )}
       </AnimatePresence>
 
