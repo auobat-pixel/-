@@ -213,7 +213,7 @@ export const ListingCard: React.FC<ListingCardProps> = ({ listing, onShare, onDe
                   {listing.notes && (
                     <div>
                       <span className="text-[10px] text-slate-400 block mb-1 font-black">ملاحظات</span>
-                      <p className="text-sm font-medium text-slate-700 leading-relaxed bg-white p-3 rounded-xl border border-slate-100">
+                      <p className="text-[21px] font-medium text-slate-700 leading-relaxed bg-white p-3 rounded-xl border border-slate-100">
                         {listing.notes}
                       </p>
                     </div>

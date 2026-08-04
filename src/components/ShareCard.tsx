@@ -170,12 +170,12 @@ export const ShareCard: React.FC<ShareCardProps> = ({ listing, cardRef }) => {
 
             {/* Notes */}
             {listing.notes && (
-              <div className="px-8 py-4 bg-blue-50/50 rounded-3xl border border-blue-100/50 flex items-start gap-4">
-                 <div className="text-blue-400 opacity-50 text-[3rem] font-serif leading-none mt-2">"</div>
-                 <p className="text-[2.2rem] font-medium text-slate-700 leading-relaxed flex-1 mt-2">
+              <div className="px-8 py-6 bg-blue-50/50 rounded-3xl border border-blue-100/50 flex items-start gap-4">
+                 <div className="text-blue-400 opacity-50 text-[3.5rem] font-serif leading-none mt-2">"</div>
+                 <p className="text-[3rem] font-medium text-slate-700 leading-relaxed flex-1 mt-2">
                    {listing.notes}
                  </p>
-                 <div className="text-blue-400 opacity-50 text-[3rem] font-serif leading-none mt-auto mb-1">"</div>
+                 <div className="text-blue-400 opacity-50 text-[3.5rem] font-serif leading-none mt-auto mb-1">"</div>
               </div>
             )}
           </div>
